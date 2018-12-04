@@ -590,3 +590,177 @@ def profile():
 #### 课时21【默认过滤器的使用】
 
 {{singnature|default("此人很懒，没有留下任何说明")}}，使用default过滤器，当value不存在的时候，就会使用默认过滤器，但是如果有值，但是该值为null／none／false 等还是会显示出来，这个时候就需要给default传递一个参数boolean=True。也相当于singnature or “此人很懒，没有留下任何说明”。
+
+
+
+#### 课时22【常用的过滤器】
+
+##### 1、escape(或者e)自动转义过滤器
+
+转义字符，会将<、>等符号转义成Html中的符号。使用方法如下：signature|escape(或者e)。默认是已经开启了该过滤器。可以使用下面的方法关闭该过滤器：
+
+```html
+{% autoescape off %}
+        <p>个性签名：{{ signature }}</p>
+{% endautoescape %}
+```
+
+##### 2、safe过滤器：可以关闭一个字符串的自动转义
+
+```html
+<p>个性签名：{{ signature|safe }}</p>
+```
+
+##### 3、其它标签：
+
+​	（1）abs：获取参数的绝对值
+
+​	（2）length:获取序列的长度
+
+​	（3）first:获取序列的第一个元素
+
+​	（4）last:获取序列的最后一个元素
+
+​	（5）int:将参数装换为整数类型
+
+​	（6）float:将参数转换为浮点类型
+
+​	（7）join(d='u')：将序列通过字符串u拼接在一起
+
+​	（8）truncate(length=24):截取对象长度的一部分
+
+​	（9）striptags:去掉参数中所有的标签
+
+​	（10）trim:截取字符串前面和后面的空白
+
+​	（11）string:将变量转换为字符串
+
+​	（12）wordcount：统计字符串的长度
+
+​	（13）lower:将字符串全部转换为小写
+
+​	（14）upper:将字符串全部转换为大写
+
+​	（15）replace(old,new):将字符串中的old的字符替换为new字符串
+
+#### 课时23【自定义过滤器】
+
+过滤器本质上也是一个函数，因此我们也要在代码中定义一个这样的处理函数。
+
+```python
+@app.template_filter('cut')
+def my_cut(value):
+    value = value.replace('hello', '')
+    return value
+```
+
+#### 课时24【自定义时间处理过滤器案例】
+
+```python
+@app.route('/')
+def hello_world():
+    context = {
+        "name":"json_xia",
+        "signature":"<script>alert('hello')</script>",
+        "title":"hello world hello me hello you hello we",
+        "create_time":datetime(2018, 9, 3, 22, 52)
+    }
+    return render_template('index.html',**context)
+
+@app.template_filter('handle_time')
+def handle_time(time):
+    if isinstance(time, datetime):
+        timestamp = (datetime.now() - time).total_seconds()
+        if timestamp < 60:
+            return "刚刚"
+        elif 60 < timestamp < 60*60:
+            t = int(timestamp/60)
+            return "%s 分钟前" % t
+        elif 60*60 < timestamp < 24*60*60:
+            t = int(timestamp/60/60)
+            return "%s 小时前" % t
+        elif 24*60*60 < timestamp < 24*60*60*30:
+            t = int(timestamp/60/60/24)
+            return "%s 几天前" % t
+        else:
+            return time
+        
+ <p>{{ create_time|handle_time }}</p>
+```
+
+
+
+#### 课时25【if语句详解】
+
+if 语句的具体用法跟python中用法类似，但是在Jinja2中必须放在{% if ……%}里面，下面可以写条件满足后的代码，同时还必须要有一个结束标签{% endif %}，也可以在中间嵌套elif
+
+```html
+{% if age > 18 %}
+	<p>你已成年，可以进入网吧</p>
+{% elif age == 18 %}
+	<p>你还需要在等半年才能去网吧</p>
+{% else %}
+	<p>你还是未成年人，不能进入网吧</p>
+{% endif %}
+```
+
+课时26【for 循环详解】
+
+```html
+<tbody>
+            {% for book in books %}
+                {% if loop.first %}
+                    <tr style="background-color: hotpink">
+                {% elif loop.last %}
+                    <tr style="background-color: aquamarine">
+                {% else %}
+                    <tr>
+                {% endif %}
+                    <td>{{ loop.index }}</td>
+                    <td>{{ book.name }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.price }}</td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+
+```
+
+课时27【九九乘法表案例】
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>乘法表</title>
+</head>
+<body>
+
+    <table border="1">
+
+        {% for i in range(1,10) %}
+            <tr>
+                {% for j in range(1, i + 1) %}
+
+                    <td>{{ j }} * {{ i }} = {{ j*i }}</td>
+
+                {% endfor %}
+
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+
+</body>
+
+</html>
+```
+
+
+
+课时28【模版中的宏】
+
+模版中的宏，有点类似python中的函数，可以传递参数，但是不能有返回值。可以将一些经常用到的代码片段放到宏中，然后把一些不固定的值抽取出当成一个变量。
