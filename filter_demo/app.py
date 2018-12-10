@@ -40,6 +40,11 @@ def handle_time(time):
             return time
 
 
+@app.route('/v3/')
+def zhi():
+    return render_template('page3.html', username="zhiliao")
+
+
 
 
 if __name__ == '__main__':

@@ -704,7 +704,7 @@ if 语句的具体用法跟python中用法类似，但是在Jinja2中必须放�
 {% endif %}
 ```
 
-课时26【for 循环详解】
+#### 课时26【for 循环详解】
 
 ```html
 <tbody>
@@ -727,18 +727,11 @@ if 语句的具体用法跟python中用法类似，但是在Jinja2中必须放�
 
 ```
 
-课时27【九九乘法表案例】
+#### 课时27【九九乘法表案例】
 
 ```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>乘法表</title>
-</head>
-<body>
-
-    <table border="1">
+<table border="1">
+        <tbody>
 
         {% for i in range(1,10) %}
             <tr>
@@ -750,17 +743,114 @@ if 语句的具体用法跟python中用法类似，但是在Jinja2中必须放�
 
             </tr>
         {% endfor %}
+            
         </tbody>
-
-    </table>
-
-</body>
-
-</html>
+</table>
 ```
 
 
 
-课时28【模版中的宏】
+#### 课时28【模版中的宏】
 
 模版中的宏，有点类似python中的函数，可以传递参数，但是不能有返回值。可以将一些经常用到的代码片段放到宏中，然后把一些不固定的值抽取出当成一个变量。
+
+```html
+{% macro my_input(name="", type="text", value="")%}
+        <input name="{{ name }}" type="{{ type }}" value="{{ value }}">
+{% endmacro %}
+
+    <h1>知了登录</h1>
+    <table>
+        <tbody>
+            <tr>
+                <td>用户名:</td>
+                <td>{{ my_input('username') }}</td>
+            </tr>
+            <tr>
+                <td>密码:</td>
+                <td>{{ my_input('password', type='password') }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>{{ my_input(value='提交', type='submit') }}</td>
+         
+```
+
+#### 课时29【宏的导入和注意事项】
+
+在时间开发中，会将一些常用的宏单独放到一个一个文件中，在需要使用的时候，再从这个文件中导入。
+
+导入宏的方式有两种：
+
+​	（1）采用 from "宏文件的路径" import 宏名称 【as 别名 】
+
+```html
+{% from "macros/macro.html" import my_input %}
+{% import "macros/macro.html" as macro with context %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>知了宏</title>
+</head>
+<body>
+    <h1>知了登录</h1>
+    <table>
+        <tbody>
+            <tr>
+                <td>用户名:</td>
+                <td>{{ macro.my_input('username') }}</td>
+            </tr>
+            <tr>
+                <td>密码:</td>
+                <td>{{ macro.my_input('password', type='password') }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>{{ macro.my_input(value='提交', type='submit') }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>{{ username }}</p>
+</body>
+</html>
+```
+
+​	(2) import ”宏文件的绝对路径“  as 别名
+
+```html
+{% import "macros/macro.html" as macro with context %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>知了宏</title>
+</head>
+<body>
+    <h1>知了登录</h1>
+    <table>
+        <tbody>
+            <tr>
+                <td>用户名:</td>
+                <td>{{ macro.my_input('username') }}</td>
+            </tr>
+            <tr>
+                <td>密码:</td>
+                <td>{{ macro.my_input('password', type='password') }}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>{{ macro.my_input(value='提交', type='submit') }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>{{ username }}</p>
+</body>
+</html>
+```
+
+备注：
+
+​	宏的路径都是相对于templates文件夹的位置而言
+
+3、如果想要将当前模版中的变量也在宏中引用，那么可以采用 from "macros/macro.html" import my_input with context
