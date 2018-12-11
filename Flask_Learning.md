@@ -851,6 +851,29 @@ if 语句的具体用法跟python中用法类似，但是在Jinja2中必须放�
 
 备注：
 
-​	宏的路径都是相对于templates文件夹的位置而言
+​	（1）宏的路径都是相对于templates文件夹的位置而言；
 
-3、如果想要将当前模版中的变量也在宏中引用，那么可以采用 from "macros/macro.html" import my_input with context
+​	（2）如果想要将当前模版中的变量也在宏中引用，那么可以采用 from "macros/macro.html" import my_input with context
+
+
+
+#### 课时30【include 标签的使用】
+
+这个标签相当于直接把指定模版中的代码复制粘贴到当前位置。
+
+```html
+<!--使用方法-->
+{% include "commons/header.html" %}
+    <div>
+        这是我自己的内容
+    </div>
+{% include "commons/footer.html" %}
+```
+
+注意：
+
+​	（1）include 的路径，也是跟import 一样，都是直接从templates根目录开始去找，不要以相对路径查找。
+
+​	（2）可以直接使用父模版中的变量。和宏不一样，宏还需要再引入的时候加上with context ,include 可以直接使用。
+
+#### 课时31【set和with 语句在模版中定义变量】
