@@ -403,8 +403,6 @@ app.run(debug=True, port=9000, host='0.0.0.0')
 
 
 
-
-
 #### 课时15【重定向】
 
 重定向分两种：永久性重定向和暂时性。
@@ -643,6 +641,8 @@ def profile():
 
 ​	（15）replace(old,new):将字符串中的old的字符替换为new字符串
 
+
+
 #### 课时23【自定义过滤器】
 
 过滤器本质上也是一个函数，因此我们也要在代码中定义一个这样的处理函数。
@@ -704,6 +704,8 @@ if 语句的具体用法跟python中用法类似，但是在Jinja2中必须放�
 {% endif %}
 ```
 
+
+
 #### 课时26【for 循环详解】
 
 ```html
@@ -726,6 +728,8 @@ if 语句的具体用法跟python中用法类似，但是在Jinja2中必须放�
         </tbody>
 
 ```
+
+
 
 #### 课时27【九九乘法表案例】
 
@@ -776,9 +780,11 @@ if 语句的具体用法跟python中用法类似，但是在Jinja2中必须放�
          
 ```
 
+
+
 #### 课时29【宏的导入和注意事项】
 
-在时间开发中，会将一些常用的宏单独放到一个一个文件中，在需要使用的时候，再从这个文件中导入。
+在实际开发中，会将一些常用的宏单独放到一个文件中，在需要使用的时候，再从这个文件中导入。
 
 导入宏的方式有两种：
 
@@ -786,7 +792,6 @@ if 语句的具体用法跟python中用法类似，但是在Jinja2中必须放�
 
 ```html
 {% from "macros/macro.html" import my_input %}
-{% import "macros/macro.html" as macro with context %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -876,4 +881,108 @@ if 语句的具体用法跟python中用法类似，但是在Jinja2中必须放�
 
 ​	（2）可以直接使用父模版中的变量。和宏不一样，宏还需要再引入的时候加上with context ,include 可以直接使用。
 
+
+
 #### 课时31【set和with 语句在模版中定义变量】
+
+有时候我们在开发过程中定义一些变量，然后在整个模版中都可以使用这些变量，这个时候我们就可以通过set在模版中来定义一个变量。如果想要控制这个变量的作用域，那么可以使用with  context
+
+```html
+{% set username="xiameilin" %}
+{% include "commons/header.html" %}
+<div>
+    这是我自己的内容
+</div>
+{% include "commons/footer.html" %}
+
+<p>姓名:{{ username }}</p>
+{% with age=18  %}
+<p>年龄:{{ age }}</p>
+{% endwith %}
+```
+
+
+
+#### 课时32【加载静态文件】
+
+静态文件：js／css／images／html。在实际开发中，我们经常将各种静态资源都分开放在不同的文件中，便于管理。静态文件一般存放在项目的static文件夹下面，通常我们会根据需要将js／css／imags文件分别放在不同的文件夹下。
+
+```html
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/css01.css') }}">
+    <script src="{{ url_for('static', filename='js/js01.js') }}"></script>
+    <img src="{{ url_for('static', filename='images/bokeh.png') }}">
+```
+
+加载静态文件，需要注意到以下几点：
+
+​	（1）如果是css文件，需要添加herf属性
+
+​	（2）如果是js／images文件，需要添加src属性
+
+​	（3）属性值为"url_for('static', filename='css/css01.css'))"，其中该函数的第一参数默认为'static'，第二个关键字参数值为静态资源的路径，该路径都是相对于static文件夹而言的绝对路径。
+
+
+
+#### 课时33【模版继承】
+
+Flask中的模版可以继承，通过继承可以把模版中的许都重复的元素提取出来，放在父模版中，并且父模版中通过定义block给子模版开一个口子，子模版根据需要，再实现这个block，假设现在有一个base.html这个父模版代码如下：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>
+        {% block title %}
+
+        {% endblock %}
+    </title>
+
+    <style>
+        .nav ul {
+            overflow: hidden;
+        }
+        .nav ul li {
+            float: left;
+            margin: 0 30px;
+
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <ul type="none">
+            <li>首页</li>
+            <li>课程详情</li>
+            <li>视频教程</li>
+            <li>关于我们</li>
+        </ul>
+    </nav>
+    {% block my_block %}
+        <p>我是父模版中的代码</p>
+    {% endblock %}
+    <footer>
+        这是底部内容
+    </footer>
+</body>
+</html>
+```
+
+子模版代码：
+
+```html
+{% extends "base.html" %}
+
+{% block title %}
+    知了首页
+{% endblock %}
+
+{% block my_block %}
+    {{ super() }}
+    {{ self.title() }}
+    <p>这是子模版实现的代码</p>
+{% endblock %}
+
+```
+
