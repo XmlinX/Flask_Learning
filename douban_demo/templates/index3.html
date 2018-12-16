@@ -13,7 +13,7 @@
 
         .container{
             width: 375px;
-            height: 600px;
+            height: 700px;
             background-color: pink;
         }
 
@@ -89,21 +89,27 @@
             </p>
         </div>
     {% endmacro %}
+
+    {% macro moduleTitle(module_title, items) %}
+        <div class="item-list-group">
+            <div class="item-list-top">
+                <span class="module-title">{{ module_title }}</span>
+                <a href="#" class="more-btn">更多</a>
+            </div>
+            <div class="list-group">
+               {% for item in items %}
+                    {{ itemGroup(item.thumbnail, item.title, item.rating) }}
+               {% endfor %}
+            </div>
+        </div>
+    {% endmacro %}
+
     <div class="container">
         <div class="search_group">
             <input type="text" class="search-input" placeholder="搜索">
         </div>
-        <div class="item-list-group">
-            <div class="item-list-top">
-                <span class="module-title">电影</span>
-                <a href="#" class="more-btn">更多</a>
-            </div>
-            <div class="list-group">
-                {{ itemGroup('https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2539666559.jpg', '星球大战', 8.5) }}
-                 {{ itemGroup('https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2539666559.jpg', '星球大战', 8.5) }}
-                 {{ itemGroup('https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2539666559.jpg', '星球大战', 8.5) }}
-            </div>
-        </div>
+        {{ moduleTitle('电影', movies) }}
+        {{ moduleTitle('电视剧', tvs) }}
     </div>
 </body>
 </html>

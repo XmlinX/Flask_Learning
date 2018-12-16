@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+
+    {% block head %}
+    {% endblock %}
+
+</head>
+<body>
+    div class="container">
+        <div class="search_group">
+            <input type="text" class="search-input" placeholder="搜索">
+        </div>
+
+        {% block body %}
+        {% endblock %}
+
+    </div>
+</body>
+</html>
