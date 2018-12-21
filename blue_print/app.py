@@ -4,6 +4,7 @@ from blueprints.users import user_bp
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['SERVER_NAME'] = 'hy.com:5000'
 app.register_blueprint(user_bp)
 
 
