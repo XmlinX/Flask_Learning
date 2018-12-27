@@ -91,7 +91,11 @@ def list():
 
 @app.route('/list/')
 def my_list():
-    return render_template()
+    context = {
+        "movies": movies,
+        "tvs": tvs
+    }
+    return render_template('index.html', **context)
 
 
 if __name__ == '__main__':

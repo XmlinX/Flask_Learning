@@ -879,7 +879,7 @@ if 语句的具体用法跟python中用法类似，但是在Jinja2中必须放�
 
 ​	（1）include 的路径，也是跟import 一样，都是直接从templates根目录开始去找，不要以相对路径查找。
 
-​	（2）可以直接使用父模版中的变量。和宏不一样，宏还需要再引入的时候加上with context ,include 可以直接使用。
+​	（2）可以直接使用父模版中的变量。和宏不一样，宏还需要在引入的时候加上with context ,include 可以直接使用。
 
 
 
@@ -984,5 +984,376 @@ Flask中的模版可以继承，通过继承可以把模版中的许都重复的
     <p>这是子模版实现的代码</p>
 {% endblock %}
 
+```
+
+
+
+课时38【类视图】
+
+之前我们接触到的视图都是函数，所以我们一般称为视图函数。其实我们的视图函数也可以基于类实现，类视图的好处是能支持继承。
+
+1、基于标准的类视图
+
+​	（1）继承:views.View
+
+​		class My_list(views.View):
+
+​	（2）必须在子类中实现dispatch_request，该方法类似于视图函数，用来处理请求。也要返回一个基于Response类或者子类的对象
+
+​	（3）将类视图映射到url下面
+
+​		app.add_url_rule('/list/', endpoint='list', view_func=My_list.as_view('list'))
+
+```python
+from flask import Flask, views, jsonify
+
+app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+
+
+@app.route('/')
+def hello_world():
+    return 'Hello World!'
+
+
+class JsonView(views.View):
+    def get_data(self):
+        raise NotImplementedError
+    def dispatch_request(self):
+        return jsonify(self.get_data())
+
+
+class My_list(JsonView):
+    def get_data(self):
+        return {'name':'zjiliao',"age":18}
+
+
+app.add_url_rule('/list/', endpoint='list', view_func=My_list.as_view('list'))
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+```
+
+2、基于请求方法的类视图。这种视图，我们需要自己实现get和post，然后根据用户的请求方法，如果用户使用的是get方法，则执行get方法，如果是post请求，则执行post方法
+
+​	
+
+```python
+from flask import Flask, views, jsonify
+
+app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+
+
+class ProfileView(views.MethodView):
+    def get(self):
+        return '这是get请求'
+
+    def post(self):
+        return "这是post请求"
+
+app.add_url_rule('/profile/', endpoint='profile',view_func=ProfileView.as_view('profile'))
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+```
+
+
+
+课时40【类视图中使用装饰器】
+
+​		
+
+​	
+
+​	
+
+课时41【蓝图的基本使用】
+
+蓝图主要是为了使我们的flask项目分层解耦，可以将相同模块的视图函数放在同一个文件中，使得代码更加便于管理。
+
+基本语法：
+
+​	在蓝图文件中
+
+​	（1）引入相应的模块：
+
+```python
+from flask import Blueprint
+```
+
+​	（2）生成一个蓝图（作用类似于app）
+
+```python
+user_bp = Blueprint('user', __name__, url_prefix='/user')
+```
+
+​	（3将蓝图绑定url
+
+```python
+@user_bp.route('/profile/')
+def profile():
+    return "这是用户界面"
+
+```
+
+​	主app中：
+
+​	（1）引入相应的蓝图
+
+```python
+from blueprints.users import user_bp
+```
+
+​	 (2)将该蓝图注册到主app上
+
+```python
+app.register_blueprint(user_bp)
+```
+
+```python
+
+from flask import Blueprint
+
+user_bp = Blueprint('user', __name__, url_prefix='/user')
+
+@user_bp.route('/profile/')
+def profile():
+    return "这是用户界面"
+
+@user_bp.route('/setting/')
+def setting():
+    return "这是用户设置界面"
+
+
+#主app中
+from flask import Flask
+from blueprints.users import user_bp
+
+
+app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.register_blueprint(user_bp)
+
+
+@app.route('/')
+def hello_world():
+    return 'Hello World!'
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+```
+
+
+
+课时42【蓝图中模版文件寻找规则】
+
+如果项目中的templates文件夹中有相应的模版文件。就直接使用；如果项目中的templates文件夹中没有相应的模版文件，那么就去定义蓝图的时候指定的路径中寻找，并且蓝图中指定的路径可以为相对路径，相对这个蓝图文件当前所在的路径
+
+```python
+#子模版
+from flask import Blueprint
+
+user_bp = Blueprint('user', __name__, subdomain='cms')
+@user_bp.route('/profile/')
+def profile():
+    return "这是用户界面"
+
+@user_bp.route('/setting/')
+def setting():
+    return "这是用户设置界面"
+
+#父模版
+from flask import Flask
+from blueprints.users import user_bp
+app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['SERVER_NAME'] = 'hy.com:5000'
+app.register_blueprint(user_bp)
+
+@app.route('/')
+def hello_world():
+    return 'Hello World!'
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+```
+
+
+
+课时46【flask数据库-MySQL以及注意事项】
+
+
+
+
+
+
+
+
+
+
+
+课时47【SQLAlchemy介绍和基本使用】
+
+数据库是一个网站的基础，在Flask中可以自由的使用MySQL、PostgreSQL、SQLlite、Redis、MongoDB来写原生的语句实现功能，也可以使用更高级别的数据库抽象方式，如SQLAlchemy或MongoEngin这样的ORM。本次主要讲解Python + SQLAlchemy来进行讲解。
+
+（1）确保安装一下软件：
+
+​		1、mysql
+
+​		2、MySQLdb：Python是用来操组Mysql的包。但是在在Python3中，我们使用Pymysql。安装命令：pip install Pymysql (MySQLdb)
+
+​		3、SQLAlchemy：是一个数据库的ORM框架。安装命令：pip install SQLAlchemy
+
+（2）使用SQLAlchemy连接和操作数据库
+
+​		1、终端如何连接数据库：mysql   -h主机地址  -u用户名   -p（如果是本机的话，可以省略 -h主机地址）
+
+​		2、使用SQLAlchemy连接数据库具体操作
+
+```python
+from sqlalchemy import create_engine
+#from constants import DB_URI
+
+HOSTNAME = '192.168.31.47'
+PORT = '3306'
+DATABASE = 'demo_test'
+USERNAME = 'root'
+PASSWORD = 'root'
+
+#dialect+driver://username:password@host:port/database
+DB_URI = 'mysql+pymysql://{username}:{password}@{host}:{port}/{database}'.format(username=USERNAME, password=PASSWORD, host=HOSTNAME, port=PORT, database=DATABASE)
+
+#使用create_engine创建一个引擎
+engine = create_engine(DB_URI)
+
+sql1 = 'select 1'
+#使用with语句连接数据库，如果有异常会被捕获
+with engine.connect() as  conn:
+    result = conn.execute(sql1)
+    print(result.fetchone())
+```
+
+
+
+课时48【Flask数据库-ORM介绍】对象关系映射（模型与表之间的映射）
+
+O：Object 对象	R：Relationship  关系	M：mapping 映射
+
+随着项目越来越大，采用写原声SQL的方式在代码中出现大量的SQL语句，那么问题就出现了：
+
+​	1、SQL语句重复利用率不高，越复杂的SQL语句条件越多，代码越长，会出现很多相近的SQL的语句。
+
+​	2、很多SQL语句是业务逻辑拼出来的，如果有数据库需要修改，就要去修改这些逻辑，这会很容易遗漏掉对某些SQL语句的修改。
+
+​	3、写SQL时容易忽略web安全问题，给未来造成隐患。
+
+```python
+class Person(object):
+    name = 'xxxx'
+    age = 18
+    country = 'xxxx'    
+    
+create table Person(name varchar(20) not null, age int default 18, country varchar(25) null)
+
+'''可以作如下映射：
+	1、Person类对应数据库中的表Person
+	2、Person类属性对应数据库的字段
+	3、Person实例化一个对象对比数据库中的一条数据'''
+```
+
+
+
+课时49【定义ORM模型并将其映射到数据库中】
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+
+HOSTNAME = '192.168.31.47'
+PORT = '3306'
+DATABASE = 'demo_test'
+USERNAME = 'root'
+PASSWORD = 'root'
+
+#dialect+driver://username:password@host:port/database
+DB_URI = 'mysql+pymysql://{username}:{password}@{host}:{port}/{database}'.format(username=USERNAME, password=PASSWORD, host=HOSTNAME, port=PORT, database=DATABASE)
+#使用create_engine创建一个引擎
+engine = create_engine(DB_URI)
+Base = declarative_base(engine)
+
+
+'''1、创建一个ORM模型，这个模型必须继承自sqlalchemy给我们提供好的基类'''
+class Person(Base):
+    #定义__tablename__属性，绑定这个模型和数据库中表名
+    __tablename__ = 'person'
+    
+    '''2、给这个ORM模型创建一些属性，来跟数据库表中的字段进行一一对应，这些属性也必须是sqlalchemy给我们提供好的数据类型'''
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(25))
+    age = Column(Integer)
+    
+'''3、将创建好的ORM模型，映射到数据库中'''
+Base.metadata.create_all()
+
+#一旦使用Base.metadata.create_all()将模型映射到数据库中，即使改变模型，也不会重新映射
+```
+
+
+
+课时50【使用SQLAlchemy完成数据库的增删改查】
+
+```python
+from sqlalchemy.orm import sessionmaker
+
+#构建session对象，所有和数据库的ORM操作都必须通过一个叫session的会话对象来实现对数据的增删改查，
+Session = sessionmaker(engine)
+session = Session()
+
+#初始化一个对象，实质就是创建一条数据
+p = Person(name='xiameilin', age=18, country='wuhan')
+
+#将对象添加带session中
+session.add(p)
+#session中的对象做commit操作
+session.commit()
+
+#增
+'''添加多条数据'''
+p1 = Person(name='xiameilin002', age=19, country='shenzhen')
+p2 = Person(name='xiameilin003', age=20, country='guangzhou')
+session.add_all([p1, p2])
+session.commit()
+
+#查
+#查找某个模型对应的表中所欲的数据
+all_persons = session.query(Person).all()
+#条件查找
+def search_data():
+    #查找某个模型对应的表中的数据
+    
+    #使用filter_by
+    all_persons = session.query(Person).filter_by(name='xiameilin').all()
+    print(all_persons)
+    #使用filter
+    all_persons = session.query(Person).filter(Person.name=='xiameilin').all()
+    #使用get方法查找，只能根据主键查找
+     all_person = session.query(Person).get(1)
+    #使用first()查找第一条数据
+    all_person = session.query(Person).first()
+    
+#改
+def update_data():
+    #要修改对象，首先要获取到该对象，然后修改对象对应的属性，最后通过commit进行提交
+    person = session.query(Person).filter_by(name='xiameilin').first()
+    person.name = 'yeyanmei'
+    session.commit()
 ```
 

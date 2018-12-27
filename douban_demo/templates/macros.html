@@ -7,7 +7,7 @@
             {% set halfs = (rating|int)%2 %}
             {% set grays = 5 - lights - halfs %}
             {% for light in range(0,lights) %}
-                <img src="{{ url_for('static', filename='images/star.png') }}">
+                <img src="{{ url_for('static', filename='images/star.png') }}" style="height: 147px">
             {% endfor %}
             {{ rating }}
         </p>
