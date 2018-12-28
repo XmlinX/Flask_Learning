@@ -1,6 +1,9 @@
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, DECIMAL, Enum, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import enum
+from datetime import date
+from sqlalchemy.dialects.mysql import LONGTEXT
 
 HOSTNAME = '192.168.31.47'
 PORT = '3306'
@@ -26,8 +29,28 @@ class Person(Base):
     age = Column(Integer)
     country = Column(String(50))
 
+
     def __str__(self):
         return "<Person(name:%s, age:%s, country:%s)>" % (self.name, self.age, self.country)
+
+class TagEnum(enum.Enum):
+    flask = 'flask'
+    django = 'django'
+    tonado = 'tonado'
+
+
+class Article(Base):
+    __tablename__ = 'article'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    price = Column(Float)
+    is_delete = Column(Boolean)
+    # article = Article(10, 21.12121, is_delete=True)
+    price_full = Column(DECIMAL(10, 4))
+    tag = Column(Enum('flask', 'django', 'Tonado'))
+    frame = Column(Enum(TagEnum))
+    #article = Article(10, 21.12121, is_delete=True, 'flask',TagEnum.flask)
+    create_time = Column(DateTime)
+    # article = Article(10, 21.12121, is_delete=True, 'flask',TagEnum.flask, date(2017, 12, 28)
 
 
 
@@ -57,8 +80,8 @@ def search_data():
     # all_persons = session.query(Person).filter_by(name='xiameilin').all()
     # print(all_persons)
     # all_persons = session.query(Person).filter(Person.name).all()
-    all_person = session.query(Person).get(1)
-    all_person = session.query(Person).first()
+    all_person1 = session.query(Person).get(1)
+    all_person2 = session.query(Person).first()
 
 #改
 def update_data():

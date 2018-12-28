@@ -27,3 +27,4 @@ class Person(Base):
     age = Column(Integer)
 '''3、将创建好的ORM模型，映射到数据库中'''
 Base.metadata.create_all()
+Base.metadata.drop_all()
