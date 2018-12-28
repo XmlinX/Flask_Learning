@@ -1192,14 +1192,6 @@ if __name__ == '__main__':
 
 
 
-
-
-
-
-
-
-
-
 课时47【SQLAlchemy介绍和基本使用】
 
 数据库是一个网站的基础，在Flask中可以自由的使用MySQL、PostgreSQL、SQLlite、Redis、MongoDB来写原生的语句实现功能，也可以使用更高级别的数据库抽象方式，如SQLAlchemy或MongoEngin这样的ORM。本次主要讲解Python + SQLAlchemy来进行讲解。
@@ -1317,15 +1309,13 @@ from sqlalchemy.orm import sessionmaker
 Session = sessionmaker(engine)
 session = Session()
 
+#增
 #初始化一个对象，实质就是创建一条数据
 p = Person(name='xiameilin', age=18, country='wuhan')
-
 #将对象添加带session中
 session.add(p)
 #session中的对象做commit操作
 session.commit()
-
-#增
 '''添加多条数据'''
 p1 = Person(name='xiameilin002', age=19, country='shenzhen')
 p2 = Person(name='xiameilin003', age=20, country='guangzhou')
@@ -1333,7 +1323,7 @@ session.add_all([p1, p2])
 session.commit()
 
 #查
-#查找某个模型对应的表中所欲的数据
+#查找某个模型对应的表中所有的数据
 all_persons = session.query(Person).all()
 #条件查找
 def search_data():
@@ -1355,5 +1345,61 @@ def update_data():
     person = session.query(Person).filter_by(name='xiameilin').first()
     person.name = 'yeyanmei'
     session.commit()
+    
+#删
+def delete_data():
+    person = session.query(Person).filter_by(name='yeyanmei').first()
+    session.delete(person)
+    session.commit()
+```
+
+
+
+课时51【SQLAlchemy属性常用数据类型详解】
+
+sqlalchemy常用数据类型：
+
+（1）Integer：整形。映射到数据库中是int类型。
+
+（2）Float：浮点类型。映射到数据库中是float类型，占据32位，超过之后产生精度丢失。
+
+（3）Double：双精度浮点类型。映射到数据库中是double类型，占据64位，超过之后产生精度丢失。
+
+（4）Boolean：传递True和False进去
+
+（5）DECIMAL：定点类型。解决浮点类型精度丢失问题，存什么就保存什么，在使用的时需要传递两个参数，第一个参数表示总共有多少位，第二位表示小数点后面有几位。
+
+（6）Date：存储时间。只能存储年月日，映射到数据库中是date类型，在python中可以datetime.date()指定
+
+（7）DateTime：只能存储年月日年月日，映射到数据库中是datetime类型，在python中可datetime.datetime()指定
+
+（8）Time：传递datetime.time()（时分秒／微秒）
+
+（9）String：字符串类型，使用时需要指定长度，区别于Text类型
+
+（10）Text：文本类型（最多6万字符，对应Mysql中的Text）
+
+（11）LONGTEXT：长文本类型(from sqlalchemy.dialects.mysql import LONGTEXT)
+
+（12）enum：枚举类型。以后只能存枚举出的具体数值到数据库中，否则报错。
+
+```python
+class TagEnum(enum.Enum):
+    flask = 'flask'
+    django = 'django'
+    tonado = 'tonado'
+    
+    
+class Article(Base):
+    __tablename__ = 'article'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    price = Column(Float)
+    is_delete = Column(Boolean)
+    # article = Article(10, 21.12121, is_delete=True)
+    price_full = Column(DECIMAL(10, 4))
+    tag = Column(Enum('flask', 'django', 'Tonado'))
+    frame = Column(Enum(TagEnum))
+  
+article = Article(10, 21.12121, is_delete=True, 'flask',TagEnum.flask)
 ```
 
