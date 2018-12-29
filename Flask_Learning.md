@@ -1403,3 +1403,21 @@ class Article(Base):
 article = Article(10, 21.12121, is_delete=True, 'flask',TagEnum.flask)
 ```
 
+
+
+课时52【Column常用参数】
+
+（1）default：默认参数
+
+（2）nullable:是否可空(True:可为空，False：不可为空)
+
+（3）primary_key：是否是主键
+
+（4）unique：是否唯一，默认是False
+
+（5）autoincrement：是否自动增长
+
+（6）onupdate：更新的时候执行的函数。当数据有更新的时候，会调用这个参数的值或者对应的函数。
+
+（7）name：该属性在数据中的字段映射。指定ORM中的属性作为数据库中的字段名。如果有些属性在定义的时候，不希望是定义时候的那个名字，就可以添加name参数。
+
