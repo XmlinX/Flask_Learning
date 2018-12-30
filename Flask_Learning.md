@@ -1421,3 +1421,200 @@ article = Article(10, 21.12121, is_delete=True, 'flask',TagEnum.flask)
 
 （7）name：该属性在数据中的字段映射。指定ORM中的属性作为数据库中的字段名。如果有些属性在定义的时候，不希望是定义时候的那个名字，就可以添加name参数。
 
+```python
+from sqlalchemy import create_engine, Column, String, Integer,DECIMAL,DateTime,Time,Date,Text,Boolean
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
+
+
+HOSTNAME = '192.168.31.47'
+PORT = '3306'
+DATABASE = 'demo_test'
+USERNAME = 'root'
+PASSWORD = 'root'
+
+
+DB_URI = 'mysql+pymysql://{username}:{password}@{hostname}:{port}/{database}'.format(username=USERNAME, password=PASSWORD, hostname=HOSTNAME, port=PORT, database=DATABASE)
+
+engine = create_engine(DB_URI)
+Base = declarative_base(engine)
+
+
+class Article(Base):
+    __tablename__ = 'article04'
+    id =  Column(Integer, primary_key=True, autoincrement=True)
+    read_count = Column(Integer, default=100)
+    title = Column(String(20), nullable=False)
+    author = Column(String(25), nullable=False)
+    price = Column(DECIMAL(4,2))
+    create_time = Column(DateTime)
+    last_modify = Column(DateTime, onupdate=datetime.now, default=datetime.now)
+    is_delete = Column(Boolean)
+    telephone = Column(String(11), unique=True)
+    detail = Column(Text)
+
+
+article1 = Article(title='title01', author='xia01', price=12.245, create_time=datetime.now(), last_modify=datetime.now(),is_delete=False, telephone='18565709397',detail='good good study')
+
+article2 = Article(title='title02', author='xia02', price=13.245, create_time=datetime.now(), last_modify=datetime.now(),is_delete=False, telephone='18565709396',detail='good good study')
+
+article3 = Article(title='title03', author='xia03', price=14.245, create_time=datetime.now(), last_modify=datetime.now(),is_delete=False, telephone='18565709395',detail='good good study')
+
+session = sessionmaker(engine)()
+Base.metadata.create_all()
+session.add_all([article1,article2,article3])
+session.commit()
+```
+
+补充知识点：Python中的datetime和time模块
+
+```python
+#1、datetime模块
+#datatime模块重新封装了time模块，提供更多接口，提供的类有：date,time,datetime,timedelta,tzinfo
+from datetime import date,time,datetime,timedelta,tzinfo
+
+#（1-1）date类,表示日期的类。常用的属性有year, month, day
+datetime.date(year, month, day)
+#year的范围是[MINYEAR, MAXYEAR]，即[1, 9999]；
+#month的范围是[1, 12]。（月份是从1开始的，不是从0开始的_）；
+#day的最大值根据给定的year, month参数来决定。例如闰年2月份有29天；
+
+#（1-2）time类,表示时间的类，由时、分、秒以及微秒组成。常用的属性有hour, minute, second, microsecond
+'''各参数的意义不作解释，这里留意一下参数tzinfo，它表示时区信息。注意一下各参数的取值范围：hour的范围为[0, 24)，minute的范围为[0, 60)，second的范围为[0, 60)，microsecond的范围为[0, 1000000)
+'''
+datetime.time(hour[ , minute[ , second[ , microsecond[ , tzinfo] ] ] ])
+
+#（1-3）datetime类。datetime是date与time的结合体，包括date与time的所有信息
+datetime.datetime (year, month, day[ , hour[ , minute[ , second[ , microsecond[ , tzinfo] ] ] ] ] 
+#返回一个表示当前本地时间的datetime对象
+datetime.today()
+#返回一个表示当前本地时间的datetime对象，如果提供了参数tz，则获取tz参数所指时区的本地时间                  
+datetime.now([tz])
+#获取当前时间
+now = datetime.now()
+print(now)                   
+#获取指定时间
+dt = datetime(2018, 12, 30, 11, 24)
+print(dt)
+
+#（1-4）timedelta类，表示时间间隔，即两个时间点之间的长度。使用timedelta可以很方便的在日期上做天days，小时hour，分钟，秒，毫秒，微妙的时间计算，如果要计算月份则需要另外的办法。
+#日期减一天
+dt1 = dt + timedelta(days=-1)#昨天
+dt2 = dt - timedelta(days=1)#昨天
+dt3 = dt + timedelta(days=1)#明天
+delta_obj = dt3 - dt
+print (type(delta_obj),delta_obj)#<type 'datetime.timedelta'> 1 day, 0:00:00
+print (delta_obj.days ,delta_obj.total_seconds())#1 86400.0
+
+#datetime转换为时间戳
+print(dt.timestamp())
+#根据给定的时间戮，返回一个date对象
+date.fromtimestamp(timestamp)
+
+#将用户输入的str转换为datetime
+'''
+%a	本地（locale）简化星期名称	 
+%A	本地完整星期名称	 
+%b	本地简化月份名称	 
+%B	本地完整月份名称	 
+%c	本地相应的日期和时间表示	 
+%d	一个月中的第几天(01 - 31)
+'''
+print(datetime.strptime('2018-12-30 18:19:59', '%Y-%m-%d %H:%M:%S'))
+#将用户输入的datetime转换为str
+print(now.strftime('%a, %b %d %H:%M'))
+
+
+#返回两个时间的时间差
+print((now - dt).total_seconds())
+```
+
+
+
+课时53【query函数的参数】
+
+```python
+#1、模型对象，指定查找这个模型的所有属性
+result = session.query(Article).all()
+for article in result:
+    print(article)
+    
+#2、模型中的属性。可以指定只查找模型中的部分属性
+result = session.query(Article.id, Article.price, Article.telephone).all()
+for article in result:
+    print(article)
+    
+#3、聚合函数
+result1 = session.query(func.count(Article.id)).all()
+print(result1)
+result2 = session.query(func.sum(Article.price)).all()
+print(result2)
+result3 = session.query(func.avg(Article.price)).all()
+print(result3)
+result4 = session.query(func.max(Article.price)).all()
+print(result4)
+result5 = session.query(func.min(Article.price)).all()
+print(result5)
+
+
+'''完整实例代码'''
+from sqlalchemy import create_engine, Column, String, Integer,DECIMAL,DateTime,Time,Date,Text,Boolean,func
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
+
+HOSTNAME = '192.168.31.47'
+PORT = '3306'
+DATABASE = 'demo_test'
+USERNAME = 'root'
+PASSWORD = 'root'
+
+
+DB_URI = 'mysql+pymysql://{username}:{password}@{hostname}:{port}/{database}'.format(username=USERNAME, password=PASSWORD, hostname=HOSTNAME, port=PORT, database=DATABASE)
+
+engine = create_engine(DB_URI)
+Base = declarative_base(engine)
+
+
+class Article(Base):
+    __tablename__ = 'article04'
+    id =  Column(Integer, primary_key=True, autoincrement=True)
+    read_count = Column(Integer, default=100)
+    title = Column(String(20), nullable=False)
+    author = Column(String(25), nullable=False)
+    price = Column(DECIMAL(4,2))
+    create_time = Column(DateTime)
+    last_modify = Column(DateTime, onupdate=datetime.now, default=datetime.now)
+    is_delete = Column(Boolean)
+    telephone = Column(String(11), unique=True)
+    detail = Column(Text)
+
+engine = create_engine(DB_URI)
+Base = declarative_base(engine)
+session = sessionmaker(engine)()
+
+#query可用参数
+#1、模型对象，指定查找这个模型的所有属性
+result = session.query(Article).all()
+for article in result:
+    print(article)
+
+#2、模型中的属性。可以指定只查找模型中的部分属性
+result = session.query(Article.id, Article.price, Article.telephone).all()
+for article in result:
+    print(article)
+
+#3、聚合函数
+result1 = session.query(func.count(Article.id)).all()
+print(result1)
+result2 = session.query(func.sum(Article.price)).all()
+print(result2)
+result3 = session.query(func.avg(Article.price)).all()
+print(result3)
+result4 = session.query(func.max(Article.price)).all()
+print(result4)
+result5 = session.query(func.min(Article.price)).all()
+print(result5)
+```
+
