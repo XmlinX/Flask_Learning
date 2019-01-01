@@ -39,7 +39,7 @@ result = session.query(Article).all()
 for article in result:
     print(article)
 
-#2、模型中的属性。可以指定只查找模型中的部分属性
+#2、模型中的属性，可以指定只查找模型中的部分属性
 result = session.query(Article.id, Article.price, Article.telephone).all()
 for article in result:
     print(article)
