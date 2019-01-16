@@ -1190,7 +1190,7 @@ if __name__ == '__main__':
 
 课时46【flask数据库-MySQL以及注意事项】
 
-
+​	设置root密码：root
 
 课时47【SQLAlchemy介绍和基本使用】
 
@@ -1528,6 +1528,42 @@ print(now.strftime('%a, %b %d %H:%M'))
 
 #返回两个时间的时间差
 print((now - dt).total_seconds())
+                   
+#2 time模块
+print(time.gmtime())
+print(time.localtime()) #当前时间返回的是一个time.struct_time 对象
+print(time.time()) #返回的是当前时间的时间戳
+localtime = time.localtime()
+print("tm_gmtoff={}".format(localtime.tm_gmtoff))
+
+print("tm_hour={}".format(localtime.tm_hour))  #时
+
+print("tm_isdst={}".format(localtime.tm_isdst)) #是否夏令时
+
+print("tm_mday={}".format(localtime.tm_mday)) #ri
+
+print("tm_min={}".format(localtime.tm_min)) #分
+
+print("tm_mon={}".format(localtime.tm_mon)) #月
+
+print("tm_sec={}".format(localtime.tm_sec)) #秒
+
+print("tm_wday={}".format(localtime.tm_wday)) #周几
+
+print("tm_yday={}".format(localtime.tm_yday)) #一年中的第几天
+
+print("tm_year={}".format(localtime.tm_year)) #年
+
+print("tm_zone={}".format(localtime.tm_zone))
+
+ts = time.mktime(localtime) #通过给定的时间得到时间戳
+print(ts)
+
+#格式化输出时间
+print(time.strftime("%Y/%m/%d",localtime)) # 返回的是时间字符串
+timeStr = "2017-08-05 23:00:00"
+print(time.strptime(timeStr,"%Y-%m-%d %X")) #返回的是一个time.struct_time 对象
+
 ```
 
 
@@ -1702,3 +1738,154 @@ print(result_09)
 
 
 
+课时55【外键及四种约束】
+
+之前讲的都是一张表的，现在看下多张表之间操作的。SQLAlchemy中通过ForeignKey通过外键实现多表之间的关联
+
+```python
+from sqlalchemy import create_engine, Column, String, Integer,DECIMAL,DateTime,Time,Date,Text,Boolean,func, and_,or_, Enum, ForeignKey
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
+
+HOSTNAME = '192.168.31.47'
+PORT = '3306'
+DATABASE = 'sqlalchemy_demo'
+USERNAME = 'root'
+PASSWORD = 'root'
+
+DB_URI = 'mysql+pymysql://{username}:{password}@{hostname}:{port}/{database}'.format(username=USERNAME, password=PASSWORD, hostname=HOSTNAME, port=PORT, database=DATABASE)
+
+engine = create_engine(DB_URI)
+Base = declarative_base(engine)
+
+
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(20), nullable=False)
+    age = Column(Integer, default=25)
+    sex = Column(Enum('Male', 'Femal', 'Other'))
+    hobby = Column(String(20), nullable=True)
+    birthday = Column(DateTime, nullable=True)
+
+class Article(Base):
+    __tablename__ = 'article'
+    id =  Column(Integer, primary_key=True, autoincrement=True)
+    read_count = Column(Integer, default=100)
+    title = Column(String(20), nullable=False)
+    author = Column(String(25), nullable=False)
+    price = Column(DECIMAL(4,2))
+    create_time = Column(DateTime)
+    last_modify = Column(DateTime, onupdate=datetime.now, default=datetime.now)
+    is_delete = Column(Boolean)
+    telephone = Column(String(11), unique=True)
+    detail = Column(Text)
+    pub_author = Column(String(20), nullable=True)
+
+    uid = Column(Integer, ForeignKey('user.id', ondelete='Restrict'))
+
+
+session = sessionmaker(engine)()
+Base.metadata.drop_all()
+Base.metadata.create_all()
+
+date1 = datetime(2017, 9, 29,10,34,5)
+date2 = datetime(2015, 9, 29,12,23,45)
+user = User(name='xia01', sex='Male', hobby='PingPong', birthday=date1)
+session.add(user)
+session.commit()
+
+'''ForeignKey的约束条件'''
+1、Restrict：默认。父表中的数据删除，会阻止删除该数据
+2、NO CATION：Mysql中同上
+3、Cascade：集联删除。父表中的数据删除，从表中的数据也跟着删除
+4、SET Null：父表中的数据删除，从表中的数据相应设置为空
+
+```
+
+
+
+课时56【ORM模型和一对多的关系】
+
+```python
+from sqlalchemy import create_engine, Column, String, Integer,DECIMAL,DateTime,Time,Date,Text,Boolean,func, and_,or_, Enum, ForeignKey
+from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
+
+HOSTNAME = '192.168.31.47'
+PORT = '3306'
+DATABASE = 'sqlalchemy_demo'
+USERNAME = 'root'
+PASSWORD = 'root'
+
+DB_URI = 'mysql+pymysql://{username}:{password}@{hostname}:{port}/{database}'.format(username=USERNAME, password=PASSWORD, hostname=HOSTNAME, port=PORT, database=DATABASE)
+
+engine = create_engine(DB_URI)
+Base = declarative_base(engine)
+
+
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(20), nullable=False)
+    age = Column(Integer, default=25)
+    sex = Column(Enum('Male', 'Femal', 'Other'))
+    hobby = Column(String(20), nullable=True)
+    birthday = Column(DateTime, nullable=True)
+    articles = relationship('Article')
+
+
+class Article(Base):
+    __tablename__ = 'article'
+    id =  Column(Integer, primary_key=True, autoincrement=True)
+    read_count = Column(Integer, default=100)
+    title = Column(String(20), nullable=False)
+    author = Column(String(25), nullable=False)
+    price = Column(DECIMAL(4,2))
+    create_time = Column(DateTime)
+    last_modify = Column(DateTime, onupdate=datetime.now, default=datetime.now)
+    is_delete = Column(Boolean)
+    telephone = Column(String(11), unique=True)
+    detail = Column(Text)
+    pub_author = Column(String(20), nullable=True)
+    uid = Column(Integer, ForeignKey('user.id', ondelete='Restrict'))
+    author = relationship('User', backref='articles')
+
+
+
+session = sessionmaker(engine)()
+# Base.metadata.drop_all()
+# Base.metadata.create_all()
+
+article = session.query(Article).filter().first()
+print(article.author)
+
+```
+
+
+
+课时57【一对一关系映射】
+
+```python
+#现在有一个用户，两篇文章【一对多】
+user = User()
+article1 = Article()
+article2 = Article()
+
+#1、如果要将文章都添加到该用户上面，如何操作？
+user.articles.append(article1)
+user.articles.append(article2)
+session.add(user)
+session.commit()
+
+#2、现在只有一个用户，一篇文章，只想把这个作者添加到这篇文章上面【一对一】
+user = User()
+article = Article()
+article.author = user
+session.add(article)
+session.commit()
+```
+
+现在，比如有些用户信息是不经常用的，如果每次使用都全部查询，自然会影响到数据库性能，因此可以再另外使用一张表来存放一些不经常使用的用户扩展信息。此时，用户扩展信息表和用户信息表之间的关系就是一对一的关系。我们在使用的时候，通过加入uselist=False可以指定个一对一关系。author = relationship('User', backref=backref('User',uselist=False))
