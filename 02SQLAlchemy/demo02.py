@@ -47,11 +47,15 @@ for article in result:
 #3、聚合函数
 result1 = session.query(func.count(Article.id)).all()
 print(result1)
+
 result2 = session.query(func.sum(Article.price)).all()
 print(result2)
+
 result3 = session.query(func.avg(Article.price)).all()
 print(result3)
+
 result4 = session.query(func.max(Article.price)).all()
 print(result4)
+
 result5 = session.query(func.min(Article.price)).all()
 print(result5)

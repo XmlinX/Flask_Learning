@@ -1,5 +1,5 @@
-from sqlalchemy import create_engine, Column, String, Integer,DECIMAL,DateTime,Time,Date,Text,Boolean,func, and_,or_, Enum, ForeignKey
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, Column, String, Integer,DECIMAL,DateTime,Time,Date,Text,Boolean,func, and_,or_, Enum, ForeignKey, Table
+from sqlalchemy.orm import sessionmaker, relationship,backref
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 
@@ -15,14 +15,11 @@ engine = create_engine(DB_URI)
 Base = declarative_base(engine)
 
 
-class User(Base):
-    __tablename__ = 'user'
+class Tag(Base):
+    __tablename__ = 'tag'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(20), nullable=False)
-    age = Column(Integer, default=25)
-    sex = Column(Enum('Male', 'Femal', 'Other'))
-    hobby = Column(String(20), nullable=True)
-    birthday = Column(DateTime, nullable=True)
+
 
 class Article(Base):
     __tablename__ = 'article'
@@ -37,18 +34,19 @@ class Article(Base):
     telephone = Column(String(11), unique=True)
     detail = Column(Text)
     pub_author = Column(String(20), nullable=True)
-
     uid = Column(Integer, ForeignKey('user.id', ondelete='Restrict'))
+    #author = relationship('User', backref='articles')
+    author = relationship('User', backref=backref('Article',uselist=False))
+    tags = relationship("Tag", backref="articles",secondary=article_tag)
+
+
+article_tag = Table(
+    "article_tag",
+    Base.metadata,
+    Column("article_id",Integer, ForeignKey('article.id'), primary_key=True),
+    Column("tag_id",Integer, ForeignKey('tag.id'), primary_key=True)
+)
 
 
 
-session = sessionmaker(engine)()
-Base.metadata.drop_all()
-Base.metadata.create_all()
-
-date1 = datetime(2017, 9, 29,10,34,5)
-date2 = datetime(2015, 9, 29,12,23,45)
-user = User(name='xia01', sex='Male', hobby='PingPong', birthday=date1)
-session.add(user)
-session.commit()
 

@@ -1,5 +1,3 @@
-
-
 ### 章节1——Flask视图函数与url
 
 #### 课时1 【虚拟环境】
@@ -988,7 +986,7 @@ Flask中的模版可以继承，通过继承可以把模版中的许都重复的
 
 
 
-课时38【类视图】
+#### 课时38【类视图】
 
 之前我们接触到的视图都是函数，所以我们一般称为视图函数。其实我们的视图函数也可以基于类实现，类视图的好处是能支持继承。
 
@@ -1064,7 +1062,7 @@ if __name__ == '__main__':
 
 
 
-课时40【类视图中使用装饰器】
+#### 课时40【类视图中使用装饰器】
 
 ​		
 
@@ -1072,7 +1070,7 @@ if __name__ == '__main__':
 
 ​	
 
-课时41【蓝图的基本使用】
+#### 课时41【蓝图的基本使用】
 
 蓝图主要是为了使我们的flask项目分层解耦，可以将相同模块的视图函数放在同一个文件中，使得代码更加便于管理。
 
@@ -1152,7 +1150,7 @@ if __name__ == '__main__':
 
 
 
-课时42【蓝图中模版文件寻找规则】
+#### 课时42【蓝图中模版文件寻找规则】
 
 如果项目中的templates文件夹中有相应的模版文件。就直接使用；如果项目中的templates文件夹中没有相应的模版文件，那么就去定义蓝图的时候指定的路径中寻找，并且蓝图中指定的路径可以为相对路径，相对这个蓝图文件当前所在的路径
 
@@ -1188,11 +1186,11 @@ if __name__ == '__main__':
 
 
 
-课时46【flask数据库-MySQL以及注意事项】
+#### 课时46【flask数据库-MySQL以及注意事项】
 
 ​	设置root密码：root
 
-课时47【SQLAlchemy介绍和基本使用】
+#### 课时47【SQLAlchemy介绍和基本使用】
 
 数据库是一个网站的基础，在Flask中可以自由的使用MySQL、PostgreSQL、SQLlite、Redis、MongoDB来写原生的语句实现功能，也可以使用更高级别的数据库抽象方式，如SQLAlchemy或MongoEngin这样的ORM。本次主要讲解Python + SQLAlchemy来进行讲解。
 
@@ -1235,9 +1233,11 @@ with engine.connect() as  conn:
 
 
 
-课时48【Flask数据库-ORM介绍】对象关系映射（模型与表之间的映射）
+#### 课时48【Flask数据库-ORM介绍】对象关系映射（模型与表之间的映射）
 
 O：Object 对象	R：Relationship  关系	M：mapping 映射
+
+对象关系映射。通过ORM模型，我们可以通过类的方式操作数据库，而不用再写原声的sql语句。通过把表映射成类，把行映射成实例，把字段作为属性。
 
 随着项目越来越大，采用写原声SQL的方式在代码中出现大量的SQL语句，那么问题就出现了：
 
@@ -1245,7 +1245,7 @@ O：Object 对象	R：Relationship  关系	M：mapping 映射
 
 ​	2、很多SQL语句是业务逻辑拼出来的，如果有数据库需要修改，就要去修改这些逻辑，这会很容易遗漏掉对某些SQL语句的修改。
 
-​	3、写SQL时容易忽略web安全问题，给未来造成隐患。
+​	3、写SQL时容易忽略web安全问题，给未来造成隐患，例如：sql注入。
 
 ```python
 class Person(object):
@@ -1253,17 +1253,17 @@ class Person(object):
     age = 18
     country = 'xxxx'    
     
-create table Person(name varchar(20) not null, age int default 18, country varchar(25) null)
+create table person(name varchar(20) not null, age int default 18, country varchar(25) null)
 
 '''可以作如下映射：
-	1、Person类对应数据库中的表Person
-	2、Person类属性对应数据库的字段
+	1、Person类对应数据库中的表person
+	2、Person类属性对应数据库的表的字段
 	3、Person实例化一个对象对比数据库中的一条数据'''
 ```
 
 
 
-课时49【定义ORM模型并将其映射到数据库中】
+#### 课时49【定义ORM模型并将其映射到数据库中】
 
 ```python
 from sqlalchemy import create_engine, Column, Integer, String
@@ -1279,6 +1279,7 @@ PASSWORD = 'root'
 DB_URI = 'mysql+pymysql://{username}:{password}@{host}:{port}/{database}'.format(username=USERNAME, password=PASSWORD, host=HOSTNAME, port=PORT, database=DATABASE)
 #使用create_engine创建一个引擎
 engine = create_engine(DB_URI)
+#用declarative_base，根据engine创建一个基类
 Base = declarative_base(engine)
 
 
@@ -1300,14 +1301,15 @@ Base.metadata.create_all()
 
 
 
-课时50【使用SQLAlchemy完成数据库的增删改查】
+#### 课时50【使用SQLAlchemy完成数据库的增删改查】
 
 ```python
 from sqlalchemy.orm import sessionmaker
 
 #构建session对象，所有和数据库的ORM操作都必须通过一个叫session的会话对象来实现对数据的增删改查，
-Session = sessionmaker(engine)
-session = Session()
+#Session = sessionmaker(engine)
+#session = Session()
+session = sessionmaker(engine)()
 
 #增
 #初始化一个对象，实质就是创建一条数据
@@ -1328,20 +1330,19 @@ all_persons = session.query(Person).all()
 #条件查找
 def search_data():
     #查找某个模型对应的表中的数据
-    
-    #使用filter_by
+    #使用filter_by,相当于SQL语句中查询条件中的where子句
     all_persons = session.query(Person).filter_by(name='xiameilin').all()
     print(all_persons)
-    #使用filter
+    #使用filter，不能写关键字参数，而必须写条件（条件是True，需要使用==）
     all_persons = session.query(Person).filter(Person.name=='xiameilin').all()
-    #使用get方法查找，只能根据主键查找
+    #使用get方法查找，只能根据主键查找，只能返回一条数据或者none
      all_person = session.query(Person).get(1)
     #使用first()查找第一条数据
     all_person = session.query(Person).first()
     
 #改
 def update_data():
-    #要修改对象，首先要获取到该对象，然后修改对象对应的属性，最后通过commit进行提交
+    #要修改对象，首先要获取到该对象，然后修改对象对应的属性为你想要的数据，最后通过commit进行提交
     person = session.query(Person).filter_by(name='xiameilin').first()
     person.name = 'yeyanmei'
     session.commit()
@@ -1355,7 +1356,7 @@ def delete_data():
 
 
 
-课时51【SQLAlchemy属性常用数据类型详解】
+#### 课时51【SQLAlchemy属性常用数据类型详解】
 
 sqlalchemy常用数据类型：
 
@@ -1405,7 +1406,7 @@ article = Article(10, 21.12121, is_delete=True, 'flask',TagEnum.flask)
 
 
 
-课时52【Column常用参数】
+#### 课时52【Column常用参数】
 
 （1）default：默认参数
 
@@ -1417,9 +1418,9 @@ article = Article(10, 21.12121, is_delete=True, 'flask',TagEnum.flask)
 
 （5）autoincrement：是否自动增长
 
-（6）onupdate：更新的时候执行的函数。当数据有更新的时候，会调用这个参数的值或者对应的函数。
+（6）onupdate：更新的时候执行的函数。当数据有更新的时候，会调用这个参数的值或者对应的函数。当第一次插入数据的时候，不会使用update的值而是使用默认值。
 
-（7）name：该属性在数据中的字段映射。指定ORM中的属性作为数据库中的字段名。如果有些属性在定义的时候，不希望是定义时候的那个名字，就可以添加name参数。
+（7）name：该属性在数据中的字段映射。指定ORM中的属性作为数据库中的字段名，如果有些属性在定义的时候，不希望是定义时候的那个名字，就可以添加name参数。
 
 ```python
 from sqlalchemy import create_engine, Column, String, Integer,DECIMAL,DateTime,Time,Date,Text,Boolean
@@ -1568,15 +1569,15 @@ print(time.strptime(timeStr,"%Y-%m-%d %X")) #返回的是一个time.struct_time 
 
 
 
-课时53【query函数的参数】
+#### 课时53【query函数的参数】
 
 ```python
-#1、模型对象，指定查找这个模型的所有属性
+#1、模型对象，指定查找这个模型的所有属性查找出来。
 result = session.query(Article).all()
 for article in result:
     print(article)
     
-#2、模型中的属性。可以指定只查找模型中的部分属性
+#2、模型中的属性。可以指定只查找模型中的部分属性，将要查找的属性组成元祖的形式返回。
 result = session.query(Article.id, Article.price, Article.telephone).all()
 for article in result:
     print(article)
@@ -1642,21 +1643,21 @@ for article in result:
     print(article)
 
 #3、聚合函数
-result1 = session.query(func.count(Article.id)).all()
+result1 = session.query(func.count(Article.id)).first()
 print(result1)
-result2 = session.query(func.sum(Article.price)).all()
+result2 = session.query(func.sum(Article.price)).first()
 print(result2)
-result3 = session.query(func.avg(Article.price)).all()
+result3 = session.query(func.avg(Article.price)).first()
 print(result3)
-result4 = session.query(func.max(Article.price)).all()
+result4 = session.query(func.max(Article.price)).first()
 print(result4)
-result5 = session.query(func.min(Article.price)).all()
+result5 = session.query(func.min(Article.price)).first()
 print(result5)
 ```
 
 
 
-课时54【filter常用到的过滤条件】
+#### 课时54【filter常用到的过滤条件】
 
 ```python
 from sqlalchemy import create_engine, Column, String, Integer,DECIMAL,DateTime,Time,Date,Text,Boolean,func, and_,or_
@@ -1714,12 +1715,11 @@ result_04 = session.query(Article).filter(and_(Article.id == 1, Article.title ==
 # print(result_04)
 # print(session.query(Article).filter(and_(Article.id == 1, Article.id == 2)))
 
-#in
+#in,需要有个下划线。这是因为in是python的一个关键字，所以避免使用关键字in_
 result_05 = session.query(Article).filter(Article.id.in_([1,2])).all()
 print(result_05)
 
-
-#not in
+#not in(也可以使用~Article.id.in_)
 result_06 = session.query(Article).filter(Article.id.notin_([1,2])).all()
 print(result_06)
 
@@ -1738,7 +1738,7 @@ print(result_09)
 
 
 
-课时55【外键及四种约束】
+#### 课时55【外键及四种约束】
 
 之前讲的都是一张表的，现在看下多张表之间操作的。SQLAlchemy中通过ForeignKey通过外键实现多表之间的关联
 
@@ -1782,7 +1782,7 @@ class Article(Base):
     telephone = Column(String(11), unique=True)
     detail = Column(Text)
     pub_author = Column(String(20), nullable=True)
-
+	'''uid是外键，外键的数据类型必须和所引用的父表的主键的那个字段的数据类型保持一致'''
     uid = Column(Integer, ForeignKey('user.id', ondelete='Restrict'))
 
 
@@ -1806,7 +1806,7 @@ session.commit()
 
 
 
-课时56【ORM模型和一对多的关系】
+#### 课时56【ORM模型和一对多的关系】
 
 ```python
 from sqlalchemy import create_engine, Column, String, Integer,DECIMAL,DateTime,Time,Date,Text,Boolean,func, and_,or_, Enum, ForeignKey
@@ -1851,36 +1851,40 @@ class Article(Base):
     detail = Column(Text)
     pub_author = Column(String(20), nullable=True)
     uid = Column(Integer, ForeignKey('user.id', ondelete='Restrict'))
+    
     author = relationship('User', backref='articles')
-
 
 
 session = sessionmaker(engine)()
 # Base.metadata.drop_all()
 # Base.metadata.create_all()
+'''没有使用relationship之前'''
+article = session.query(Article).first()
+uid = article.uid
+user = session.query(User).get(uid)
 
-article = session.query(Article).filter().first()
+'''使用relationship之后'''
+article = session.query(Article).first()
 print(article.author)
 
 ```
 
 
 
-课时57【一对一关系映射】
+#### 课时57【一对一关系映射】
 
 ```python
-#现在有一个用户，两篇文章【一对多】
+'''【一对多】关系的数据操作'''
+#1、现在有一个用户两篇文章【一对多】，如果要将文章都添加到该用户上面，如何操作？
 user = User()
 article1 = Article()
 article2 = Article()
-
-#1、如果要将文章都添加到该用户上面，如何操作？
 user.articles.append(article1)
 user.articles.append(article2)
 session.add(user)
 session.commit()
 
-#2、现在只有一个用户，一篇文章，只想把这个作者添加到这篇文章上面【一对一】
+#2、现在只有一个用户，一篇文章，只想把这个作者添加到这篇文章上面
 user = User()
 article = Article()
 article.author = user
@@ -1888,4 +1892,456 @@ session.add(article)
 session.commit()
 ```
 
-现在，比如有些用户信息是不经常用的，如果每次使用都全部查询，自然会影响到数据库性能，因此可以再另外使用一张表来存放一些不经常使用的用户扩展信息。此时，用户扩展信息表和用户信息表之间的关系就是一对一的关系。我们在使用的时候，通过加入uselist=False可以指定个一对一关系。author = relationship('User', backref=backref('User',uselist=False))
+随着网站的发展，用户越来越多，用户表的字段越来越多。但是现在，比如有些用户信息是不经常用的，如果每次使用都全部查询，自然会影响到数据库性能，因此可以再另外使用一张表来存放一些不经常使用的用户扩展信息。此时，用户扩展信息表和用户信息表之间的关系就是一对一的关系。我们在使用的时候，通过加入uselist=False可以指定个一对一关系。author = relationship('User', backref=backref('User',uselist=False))
+
+
+
+#### 课时58【多对多关系映射】
+
+```python
+from sqlalchemy import create_engine, Column, String, Integer,DECIMAL,DateTime,Time,Date,Text,Boolean,func, and_,or_, Enum, ForeignKey, Table
+from sqlalchemy.orm import sessionmaker, relationship,backref
+from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
+
+HOSTNAME = '192.168.31.47'
+PORT = '3306'
+DATABASE = 'sqlalchemy_demo'
+USERNAME = 'root'
+PASSWORD = 'root'
+
+DB_URI = 'mysql+pymysql://{username}:{password}@{hostname}:{port}/{database}'.format(username=USERNAME, password=PASSWORD, hostname=HOSTNAME, port=PORT, database=DATABASE)
+
+engine = create_engine(DB_URI)
+Base = declarative_base(engine)
+
+
+class Tag(Base):
+    __tablename__ = 'tag'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(20), nullable=False)
+
+
+class Article(Base):
+    __tablename__ = 'article'
+    id =  Column(Integer, primary_key=True, autoincrement=True)
+    read_count = Column(Integer, default=100)
+    title = Column(String(20), nullable=False)
+    author = Column(String(25), nullable=False)
+    price = Column(DECIMAL(4,2))
+    create_time = Column(DateTime)
+    last_modify = Column(DateTime, onupdate=datetime.now, default=datetime.now)
+    is_delete = Column(Boolean)
+    telephone = Column(String(11), unique=True)
+    detail = Column(Text)
+    pub_author = Column(String(20), nullable=True)
+    uid = Column(Integer, ForeignKey('user.id', ondelete='Restrict'))
+    #author = relationship('User', backref='articles')
+    author = relationship('User', backref=backref('Article',uselist=False))
+    tags = relationship("Tag", backref="articles",secondary=article_tag)
+
+
+article_tag = Table(
+    "article_tag",
+    Base.metadata,
+    Column("article_id",Integer, ForeignKey('article.id'), primary_key=True),
+    Column("tag_id",Integer, ForeignKey('tag.id'), primary_key=True)
+)
+
+```
+
+总结：
+
+​	1、先把两个需要做多对多的模型定义出来；
+
+​	2、使用table定义一个中间表，中间表一般就是包含两个模型的外键字段就可以了，并且让它作为一个联合主键
+
+​	3、在两个需要做多对多的模型中随便选择一个模型定义一个relationship属性来绑定三者之间的关系，需要传入一个secondary=中间表
+
+
+
+#### 课时59【Flask数据库操作】ORM模型删除数据注意事项
+
+可以正常删主表中的数据：首先会将从表中的关联字段设置为null，然后在将主表中的数据删除掉。
+
+如果也想ORM中无法删除掉数据，那就需要将从表中的关联字段不能为空（nullable=false）
+
+
+
+#### 课时60【Flask数据库操作】ORM模型中的cascade
+
+在SQLAlchemy中，只要将数据添加到一个session中，和它相关联的数据都会保存到相应的数据库表中。这是在你们设置的？其实就是在创建关联的时候，relationship有一个字段cascade可以设置相关的参数值。
+
+（1）save-update:默认选项。在添加一条数据的时候，会把他和它相关连的数据都添加到数据库中。
+
+（2）delete：表示删除某个模型中的数据的时候，也删除与之相关联的其他表中的数据。
+
+（3）
+
+
+
+
+
+课时62【Flask数据库操作】三种排序详解
+
+1、order_by ：可以指定根据表中的某个字段进行排序。如果在前面加个“-”表示是倒序。
+
+```
+session.query(Article).order_by(Article.create_time).all()
+```
+
+ 2、在定义模型的时候，指定默认排序：有时候不希望在每次查找的时候都设置排序规则，那么可以在定义模型的时候指定按照某个字段排序规则，这个时候有两种方式：
+
+（1）给relationship指定order_by参数
+
+（2）在定义模型的时候加如下代码：
+
+__mapper_args__ = {
+
+​	"order_by":create_time
+
+}
+
+
+
+
+
+课时76【WTForms】WTForms表单验证基本使用
+
+WTForms这个库有两个作用：（1）验证用户提交数据的合法性；（2）渲染模版
+
+```python
+'''没有WTForms的时候表单验证是这样的：'''
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Hello World!'
+
+
+@app.route('/regist/', methods=['GET', 'POST'])
+def regist():
+    if request.method == 'GET':
+        return render_template('regist.html')
+    else:
+        username = request.form.get('username')
+        password = request.form.get('password')
+        password_repeat = request.form.get('password_repeat')
+        if len(username) < 3 or len(username) < 10:
+            return "用户名长度不正确"
+        if len(password) < 6 or len(password) > 10:
+            return "用户名密码不正确"
+        if password != password_repeat:
+            return "两次输入的密码不一致"
+            
+            
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+```
+
+使用WTForms的做表单验证的基本步骤：
+
+1、自定义一个表单类，继承自wtform.Form类
+
+2、定义好需要验证的字段，字段名称必须和模版中的那些需要验证的input标签的name属性值保持一致
+
+3、在需要验证的字段上，需要指定好具体的数据类型
+
+4、在相关的字段上，指定验证器
+
+5、以后在视图中，就需要使用这个表单类的对象，并且把需要验证的数据，也就是request.form传递给这个表单类[form = RegistForm(request.form)]。然后调用form.validate()方法。如果返回True，那么代表用户输入的是合法，否则代表用户的数据有问题。如果验证失败，可以通过form.errors来获取错误信息。
+
+```python
+'''使用WTForms的时候表单验证是这样的：'''
+from flask import Flask, render_template, request
+from wtforms import Form, StringField
+from wtforms.validators import Length, EqualTo
+
+class RegistForm(Form):
+    username = StringField(validators=[Length(min=3, max=10, message="用户名长度必须在3-10位之间")])
+    password = StringField(validators=[Length(min=6, max=10, message="密码长度必须在6-10位之间")])
+    password_repeat = StringField(validators=[Length(min=6, max=10, message="两次输入的密码不一致"), EqualTo("password")])
+
+app = Flask(__name__)
+
+
+@app.route('/')
+def hello_world():
+    return 'Hello World!'
+
+
+@app.route('/regist/', methods=['GET', 'POST'])
+def regist():
+    if request.method == 'GET':
+        return render_template('regist.html')
+    else:
+        form = RegistForm(request.form)
+        if form.validate():
+            return "注册成功"
+        else:
+            print(form.errors)
+            return "注册失败"
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+```
+
+
+
+课时77【WTForms】WTForms常用的验证器
+
+数据发过来，经过表单验证，因此需要验证器来进行验证，以下对一些常用的验证器进行讲解：
+
+Email：验证上传的数据是否是邮箱；
+
+EqualTo：验证上传的数据是否与另一个字段相等，常用的就是密码和确认密码两个字段是否相等；
+
+InputRequired：(字段必须传值)原始数据的需要验证,需要输入验证。如果不是特殊情况，应该使用InputRequired。
+
+Length：长度限制，有min和Max两个值限制，如果处在着两个数字之间则满足。
+
+NumberRange：数字区间，有min和max两个值限制，如果处在这两个数字区间则满足。
+
+Regerp：自定义正则表达式。
+
+URL：必须是URL的形式。
+
+UUID：验证UUID。
+
+```python
+from wtforms import Form, StringField, IntegerField
+from wtforms.validators import Length, EqualTo, Email, InputRequired, NumberRange, Regexp, URL, UUID
+#from uuid import UUID
+
+class RegistForm(Form):
+    username = StringField(validators=[Length(min=3, max=10, message="用户名长度必须在3-10位之间")])
+    password = StringField(validators=[Length(min=6, max=10)])
+    password_repeat = StringField(validators=[Length(min=3, max=10), EqualTo("password")])
+
+
+class LoginForm(Form):
+    email = StringField(validators=[Email()])
+    username = StringField(validators=[InputRequired()])
+    age = IntegerField(validators=[NumberRange(12, 100)])
+    phone = StringField(validators=[Regexp(r'1[3587]\d{9}')])
+    home_page = StringField(validators=[URL()])
+    uuid = StringField(validators=[UUID()])
+    
+```
+
+
+
+课时78【WTForms】自定义表单验证器
+
+如果像鬼表单中某一个字段进行更加细化的验证，那么需要针对这个字段进行单独验证。步骤如下：
+
+1、定义一个方法，方法名规则是：validate_字段名(self, field)
+
+2、在方法中，使用 field.data可以获取到该字段的具体值
+
+3、如果满足条件，可以什么都不做，如果不满足条件那么抛出一个wtforms.validators.ValidataError的异常，并把验证的失败信息传递到这个异常类中。
+
+如下自定义验证码验证器（captcha）
+
+```python
+from wtforms import Form, StringField, IntegerField, ValidationError
+from wtforms.validators import Length, EqualTo, Email, InputRequired, NumberRange, Regexp, URL, UUID
+#from uuid import UUID
+
+class RegistForm(Form):
+    username = StringField(validators=[Length(min=3, max=10, message="用户名长度必须在3-10位之间")])
+    password = StringField(validators=[Length(min=6, max=10)])
+    password_repeat = StringField(validators=[Length(min=3, max=10), EqualTo("password")])
+
+
+class LoginForm(Form):
+    email = StringField(validators=[Email()])
+    username = StringField(validators=[InputRequired()])
+    age = IntegerField(validators=[NumberRange(12, 100)])
+    phone = StringField(validators=[Regexp(r'1[3587]\d{9}')])
+    home_page = StringField(validators=[URL()])
+    uuid = StringField(validators=[UUID()])
+    captcha = StringField(validators=[Length(4, 4)])
+    def validate_captcha(self, field):
+        # print(field.data)
+        if field.data != '1234':
+            raise ValidationError("验证码错误")
+
+```
+
+
+
+课时79【WTForms】使用WTForms渲染模版
+
+```python
+from wtforms import Form, StringField, IntegerField, ValidationError, BooleanField, SelectField
+from wtforms.validators import Length, EqualTo, Email, InputRequired, NumberRange, Regexp, URL, UUID
+#from uuid import UUID
+
+class RegistForm(Form):
+    username = StringField(validators=[Length(min=3, max=10, message="用户名长度必须在3-10位之间")])
+    password = StringField(validators=[Length(min=6, max=10)])
+    password_repeat = StringField(validators=[Length(min=3, max=10), EqualTo("password")])
+
+
+class LoginForm(Form):
+    email = StringField(validators=[Email()])
+    username = StringField(validators=[InputRequired()])
+    age = IntegerField(validators=[NumberRange(12, 100)])
+    phone = StringField(validators=[Regexp(r'1[3587]\d{9}')])
+    home_page = StringField(validators=[URL()])
+    #uuid = StringField(validators=[UUID()])
+    #captcha = StringField(validators=[Length(4, 4)])
+    def validate_captcha(self, field):
+        # print(field.data)
+        if field.data != '1234':
+            raise ValidationError("验证码错误")
+
+
+class SettingForm(Form):
+    username = StringField("用户名", validators=[InputRequired()])
+    age = IntegerField("年龄", validators=[NumberRange(12, 100)])
+    remember = BooleanField('记住我：')
+    tags = SelectField("标签", choices=[('1','Python'),('2','Java'),('3','SQL')])
+```
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings_Page</title>
+</head>
+<body>
+    <form action="" method="POST">
+        <table>
+            <tr>
+                <td>{{ form.username.label }}</td>
+                <td>{{ form.username}}</td>
+            </tr>
+            <tr>
+                <td>{{ form.age.label }}</td>
+                <td>{{ form.age}}</td>
+            </tr>
+            <tr>
+                <td>{{ form.remember.label }}</td>
+                <td>{{ form.remember}}</td>
+            </tr>
+            <tr>
+                <td>{{ form.tags.label }}</td>
+                <td>{{ form.tags}}</td>
+            </tr>
+        </table>
+    </form>
+
+</body>
+</html>
+```
+
+
+
+课时80【Flask文件上传】上传文件以及访问文件的上传
+
+1、在模版的使用form表单中，需要指定enctype="multipart/form-data"才能上传文件；
+
+2、在后台如果想要获取到上传的文件，那么应该使用request.files.get('avatar')来获取；
+
+3、保存文件之前，先使用secure_filename(avatar.filename)来对上传的文件的名字做一个过滤，这样才能保证不会有安全问题；
+
+4、获取上传的文件后，使用avatar.save(os.path.join(UPLOAD_PATH, filename))来保存文件；
+
+5、从服务器获取文件，应该使用send_from_directory(文件目录，文件名)
+
+```python
+from flask import Flask, request, render_template, send_from_directory
+from forms import RegistForm, LoginForm, SettingForm
+import os
+from werkzeug.utils import secure_filename
+
+
+app = Flask(__name__)
+UPLOAD_PATH = os.path.join(os.path.dirname(__file__), 'images')
+
+@app.route('/')
+def hello_world():
+    return 'Hello World!'
+
+
+@app.route('/login/', methods=['GET', 'POST'])
+def Login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    else:
+        form = LoginForm(request.form)
+        if form.validate():
+            return "Success"
+        else:
+            print(form.errors)
+            return "Fail"
+
+
+@app.route('/setting/', methods=['GET', 'POST'])
+def Setting():
+    if request.method == "GET":
+        form = SettingForm()
+        return render_template('settings.html', form=form)
+
+
+@app.route('/upload/', methods=['GET', 'POST'])
+def Upload():
+    if request.method == "GET":
+        return render_template("upload_file.html")
+    else:
+        desc = request.form.get('desc')#获取描述信息
+        avatar = request.files.get('avatar')
+        filename = secure_filename(avatar.filename)
+        avatar.save(os.path.join(UPLOAD_PATH, filename))
+        return "文件上传成功"
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+```
+
+
+
+课时81【Flask文件上传】使用flask_wtf验证上传的文件
+
+1、定义表单验证的时候，需要使用FileField
+
+2、验证器需要从flask_wtf.file  中倒入file_required, file_allowed
+
+3、如果想要获取form表单中的多种类型的字段值，需要使用from werkzeug.datastructures import CombinedMultiDict 
+
+```python
+from flask_wtf.file import file_required, file_allowed
+
+class UploadForm(Form):
+    avatar = FileField(validators=[file_required(), file_allowed(['jpg', 'gif', 'png'])])
+    desc = StringField(validators=[InputRequired()])
+
+@app.route('/upload/', methods=['GET', 'POST'])
+def Upload():
+    if request.method == "GET":
+        return render_template("upload_file.html")
+    else:
+        form = UploadForm(CombinedMultiDict([request.form, request.files]))
+        if form.validate():
+            desc = request.form.get('desc')#获取描述信息
+            avatar = request.files.get('avatar')
+            filename = secure_filename(avatar.filename)
+            avatar.save(os.path.join(UPLOAD_PATH, filename))
+            print(desc)
+            return "文件上传成功"
+        else:
+            print(form.errors)
+            return "Failed"
+
+```
+
