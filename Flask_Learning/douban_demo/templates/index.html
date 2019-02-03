@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% from "macros.html" import itemGroup, moduleTitle %}
+
+{% block body %}
+    {{ moduleTitle('电影', movies) }}
+    {{ moduleTitle('电视剧', tvs) }}
+{% endblock %}

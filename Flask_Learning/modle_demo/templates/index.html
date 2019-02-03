@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}
+    知了首页
+{% endblock %}
+
+{% block my_block %}
+    {{ super() }}
+    {{ self.title() }}
+    <p>这是子模版实现的代码</p>
+{% endblock %}
