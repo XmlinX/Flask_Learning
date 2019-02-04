@@ -20,7 +20,7 @@
     '''安装到Python2环境中'''
     pip install virtualenv 
 
-    '''安装到Python2环境中'''
+    '''安装到Python3环境中'''
     pip3 install virtualenv
 
     #创建虚拟环境
@@ -2345,3 +2345,72 @@ def Upload():
 
 ```
 
+
+
+课时82【Flask Cookie】cookie的基本概念
+
+1、cookie：在网站中，http是无状态的。也就是说即使第一次连接服务器后并且成功登录之后，第二次请求服务器依然不能知道当前请求是哪一个用户。cookie的出现就是为了解决这个问题，第一次登录服务器返回一些数据（cookie）给到浏览器，然后浏览器保存到本地，当用户发送第二个请求的时候，会自动的把上一次请求存储的cookie数据自动的携带给服务器，服务器通过浏览器携带的数据就能判断当前的用户是哪一个了。cookie存储的数据量有限，不同的浏览器有不同的存储大小，但一般不超过4kb。因此使用cookie只能存储一些小量的数据 。	cookie的有效期；cookie的域名；
+
+课时83【Flask Cookie】Flask设置和操作cookie
+
+设置cookie需要在Response对象上设置（flask.Response）
+
+```python
+from flask import Flask, request, Response
+
+app = Flask(__name__)
+
+
+@app.route('/')
+def hello_world():
+    resp = Response("知了课堂")
+    resp.set_cookie('username','xia_m_lin',max_age=10)
+    resp.set_cookie('age','18', max_age=10)
+    return resp
+
+@app.route('/del/')
+def del_cookie():
+    resp = Response("删除cookie")
+    #删除cookie
+    resp.delete_cookie('username')
+    return resp
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+```
+
+课时84【Flask Cookie】设置cookie的有效期（过期时间）
+
+```python
+@app.route('/')
+def hello_world():
+    resp = Response("知了课堂")
+    resp.set_cookie('username','xia_m_lin',max_age=10)
+    expires = datetime(year=2019, month=2, day=5, hour=0, minute=30, second=0)
+    resp.set_cookie('age','18', expires=expires)
+    return resp
+'''
+(1)expires参数使用的是格林尼治时间，如果我们要使用的话，需要在时间上减少8个小时
+(2)如果同时设置了expires和max_age,那么将会以max_age作为标准
+(3)expires接收的参数是datetime类型
+(4)如果expires和max_age那么cookie的过期时间是关闭浏览器就是失效
+'''
+```
+
+课时85 【Flask Cookie】设置cookie的有效域名
+
+```python
+@app.route('/')
+def hello_world():
+    resp = Response("知了课堂")
+    resp.set_cookie('username','xia_m_lin',max_age=10, domain='.hy.com')
+    expires = datetime(year=2019, month=2, day=5, hour=0, minute=30, second=0)
+    resp.set_cookie('age','18', expires=expires)
+    return resp
+```
+
+课时86【Flask Session】session的基本概念
+
+session：session与cookie的作用有点类似，都是为了存储用户相关的信息。不同的是，cookie是存储在本地浏览器，session是存储在服务器。
