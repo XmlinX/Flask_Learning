@@ -1,4 +1,4 @@
-### 章节1——Flask视图函数与url
+#### 章节1——Flask视图函数与url
 
 #### 课时1 【虚拟环境】
 
@@ -1982,7 +1982,7 @@ article_tag = Table(
 
 
 
-课时62【Flask数据库操作】三种排序详解
+#### 课时62【Flask数据库操作】三种排序详解
 
 1、order_by ：可以指定根据表中的某个字段进行排序。如果在前面加个“-”表示是倒序。
 
@@ -2006,7 +2006,7 @@ __mapper_args__ = {
 
 
 
-课时76【WTForms】WTForms表单验证基本使用
+#### 课时76【WTForms】WTForms表单验证基本使用
 
 WTForms这个库有两个作用：（1）验证用户提交数据的合法性；（2）渲染模版
 
@@ -2094,7 +2094,7 @@ if __name__ == '__main__':
 
 
 
-课时77【WTForms】WTForms常用的验证器
+#### 课时77【WTForms】WTForms常用的验证器
 
 数据发过来，经过表单验证，因此需要验证器来进行验证，以下对一些常用的验证器进行讲解：
 
@@ -2137,7 +2137,7 @@ class LoginForm(Form):
 
 
 
-课时78【WTForms】自定义表单验证器
+#### 课时78【WTForms】自定义表单验证器
 
 如果像鬼表单中某一个字段进行更加细化的验证，那么需要针对这个字段进行单独验证。步骤如下：
 
@@ -2177,7 +2177,7 @@ class LoginForm(Form):
 
 
 
-课时79【WTForms】使用WTForms渲染模版
+#### 课时79【WTForms】使用WTForms渲染模版
 
 ```python
 from wtforms import Form, StringField, IntegerField, ValidationError, BooleanField, SelectField
@@ -2246,7 +2246,7 @@ class SettingForm(Form):
 
 
 
-课时80【Flask文件上传】上传文件以及访问文件的上传
+#### 课时80【Flask文件上传】上传文件以及访问文件的上传
 
 1、在模版的使用form表单中，需要指定enctype="multipart/form-data"才能上传文件；
 
@@ -2311,7 +2311,7 @@ if __name__ == '__main__':
 
 
 
-课时81【Flask文件上传】使用flask_wtf验证上传的文件
+#### 课时81【Flask文件上传】使用flask_wtf验证上传的文件
 
 1、定义表单验证的时候，需要使用FileField
 
@@ -2347,11 +2347,11 @@ def Upload():
 
 
 
-课时82【Flask Cookie】cookie的基本概念
+#### 课时82【Flask Cookie】cookie的基本概念
 
 1、cookie：在网站中，http是无状态的。也就是说即使第一次连接服务器后并且成功登录之后，第二次请求服务器依然不能知道当前请求是哪一个用户。cookie的出现就是为了解决这个问题，第一次登录服务器返回一些数据（cookie）给到浏览器，然后浏览器保存到本地，当用户发送第二个请求的时候，会自动的把上一次请求存储的cookie数据自动的携带给服务器，服务器通过浏览器携带的数据就能判断当前的用户是哪一个了。cookie存储的数据量有限，不同的浏览器有不同的存储大小，但一般不超过4kb。因此使用cookie只能存储一些小量的数据 。	cookie的有效期；cookie的域名；
 
-课时83【Flask Cookie】Flask设置和操作cookie
+#### 课时83【Flask Cookie】Flask设置和操作cookie
 
 设置cookie需要在Response对象上设置（flask.Response）
 
@@ -2413,4 +2413,13 @@ def hello_world():
 
 课时86【Flask Session】session的基本概念
 
-session：session与cookie的作用有点类似，都是为了存储用户相关的信息。不同的是，cookie是存储在本地浏览器，session是存储在服务器。
+1、session：session与cookie的作用有点类似，都是为了存储用户相关的信息。不同的是，cookie是存储在本地浏览器，session是存储在服务器。session 是一个概念，一个思路，一个服务器授权解决方案，不同的服务器，不同的框架，不同的语言有不同的实现。虽然实现不一样，但是他们的目的是都是服务器为了方便存储数据的。session的出现是为了解决cookie存储数据的不安全的问题。
+
+2、session与cookie的结合使用：（1）session存储在服务器端：服务器端可以使用mysql、redis、memached等存储session信息。原理是，客户端发送验证信息过来（比如用户名和密码），服务器验证成功后，把用户的相关信息存储到sesion中，随机生成一个唯一的session_id,再把这个sesion_id存储到cookie中返回给浏览器。浏览器以后再请求我们的服务器时，就会把这个session_id自动的发送给服务器，服务器再把cookie中session_id 取出来，然后从服务器的session中找到这个用户的相关信息，这样就达到安全识别用户信息的目的。（2）session存储到客户端：客户端发送验证信息过来，服务器把相关验证信息进行一个严格的加密，然后把这个加密信息存储到cookie，返回给客户端。客户端再请求服务器的时候，会自动把cookie发送给服务器，服务器拿到cookie之后，就从cookie中找到加密的那个session信息，然后也就可以实现安全认证。
+
+课时87【Flask Session】Flask操作session
+
+
+
+
+
