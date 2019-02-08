@@ -2,14 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="942b63c1-17b6-4a8b-9740-b630bb8868cb" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exts.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/forms.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/modules.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/regist.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Flask_Learning.md" beforeDir="false" afterPath="$PROJECT_DIR$/../Flask_Learning.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Session_demo/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Session_demo/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -25,6 +19,7 @@
     <session id="-1324910363">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
+          <entry key="project.closed" value="1" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.opened" value="1" />
         </counts>
@@ -32,13 +27,13 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="6" />
-          <entry key="html" value="243" />
+          <entry key="html" value="283" />
           <entry key="py" value="692" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="HTML" value="243" />
+          <entry key="HTML" value="283" />
           <entry key="PLAIN_TEXT" value="6" />
           <entry key="Python" value="692" />
         </counts>
@@ -104,8 +99,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/templates/regist.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="168">
-              <caret line="8" column="70" lean-forward="true" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="70" />
+            <state relative-caret-position="84">
+              <caret line="4" column="57" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="57" />
             </state>
           </provider>
         </entry>
@@ -296,7 +291,7 @@
     <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14306152" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14306152" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
@@ -386,8 +381,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/regist.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="8" column="70" lean-forward="true" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="70" />
+        <state relative-caret-position="84">
+          <caret line="4" column="57" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="57" />
         </state>
       </provider>
     </entry>

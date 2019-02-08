@@ -1090,7 +1090,7 @@ from flask import Blueprint
 user_bp = Blueprint('user', __name__, url_prefix='/user')
 ```
 
-​	（3将蓝图绑定url
+​	（3）将蓝图绑定url
 
 ```python
 @user_bp.route('/profile/')
@@ -2381,7 +2381,7 @@ if __name__ == '__main__':
 
 ```
 
-课时84【Flask Cookie】设置cookie的有效期（过期时间）
+#### 课时84【Flask Cookie】设置cookie的有效期（过期时间）
 
 ```python
 @app.route('/')
@@ -2399,7 +2399,7 @@ def hello_world():
 '''
 ```
 
-课时85 【Flask Cookie】设置cookie的有效域名
+#### 课时85 【Flask Cookie】设置cookie的有效域名
 
 ```python
 @app.route('/')
@@ -2411,15 +2411,174 @@ def hello_world():
     return resp
 ```
 
-课时86【Flask Session】session的基本概念
+#### 课时86【Flask Session】session的基本概念
 
 1、session：session与cookie的作用有点类似，都是为了存储用户相关的信息。不同的是，cookie是存储在本地浏览器，session是存储在服务器。session 是一个概念，一个思路，一个服务器授权解决方案，不同的服务器，不同的框架，不同的语言有不同的实现。虽然实现不一样，但是他们的目的是都是服务器为了方便存储数据的。session的出现是为了解决cookie存储数据的不安全的问题。
 
 2、session与cookie的结合使用：（1）session存储在服务器端：服务器端可以使用mysql、redis、memached等存储session信息。原理是，客户端发送验证信息过来（比如用户名和密码），服务器验证成功后，把用户的相关信息存储到sesion中，随机生成一个唯一的session_id,再把这个sesion_id存储到cookie中返回给浏览器。浏览器以后再请求我们的服务器时，就会把这个session_id自动的发送给服务器，服务器再把cookie中session_id 取出来，然后从服务器的session中找到这个用户的相关信息，这样就达到安全识别用户信息的目的。（2）session存储到客户端：客户端发送验证信息过来，服务器把相关验证信息进行一个严格的加密，然后把这个加密信息存储到cookie，返回给客户端。客户端再请求服务器的时候，会自动把cookie发送给服务器，服务器拿到cookie之后，就从cookie中找到加密的那个session信息，然后也就可以实现安全认证。
 
-课时87【Flask Session】Flask操作session
+#### 课时87【Flask Session】Flask操作session
+
+1、设置session：通过flask.session就可以操作session了，操作session就跟操作字典一样session['username']='zhiliao'
+
+2、获取session：通过session.get(key)来获取
+
+3、删除sesion中的值：可以使用3种方式来删除（1）session.pop(key) (2)sesión.clear()可以删除所有的session (3)del session[key]
+
+4、设置session的有效期：如果没有设置session的有效期，那么默认关闭浏览器后过期；如果设置session.permanent = True，那么就是默认保存31天；如果设置app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)就可以按照设置的时长保存；
+
+```python
+from flask import Flask, session
+import os
+from datetime import timedelta
+
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = os.urandom(24)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
+
+
+@app.route('/')
+def hello_world():
+    '''设置session
+    （1）设置加盐的字符串SECRET_KE
+    （2）使用session来设置，跟操作字典类似'''
+    session['username'] = 'zhiliao'
+    session['age'] = 18
+    return 'Hello World!'
+
+#获取session
+@app.route('/get_session/')
+def Get_session():
+    username = session.get('username')
+    return username or "没有session"
+
+#删除sesion方法一：
+@app.route('/del_session/')
+def Del_session():
+    session.pop('username')
+    return "删除成功"
+
+#删除session方法二：
+@app.route('/del_session2/')
+def Del_session2():
+    session.clear()
+    return "删除成功"
+
+
+#设置session的有效期
+@app.route('/lifetime/')
+def Set_lifetime():
+    session['name'] = 'xia'
+    session.permanent = True
+    return "xia_mei_lin"
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+```
+
+#### 课时88【CSRF攻击与防御】CSRF的原理
+
+CSRF攻击概述：CSRF（cross site request forgery 跨站请求伪造）是一种网路的攻击方式。网站是通过cookie来实现登录功能的，而cookie只要存在于浏览器中，只要浏览器在访问这个cookie的服务器的时候，就会自动的携带cookie信息到服务器上去。那么这个时候就存在一个漏洞，如果你访问了一个别有用心或有病毒的网站，这个网站可以在网页源代码中插入js代码，使用js代码给其他服务器发送请求。那么因为在发送请求的时候，浏览器自动的把cookie发送给对应的服务器，这个时候相应的服务器就不知道这个请求是伪造的，就会被欺骗过去了。从而达到在用户不知情的情况下，给某个服务器发送了请求。
+
+#### 课时89【CSRF攻击与防御】实战项目--中国工商银行注册功能完成
+
+防御CSRF攻击：CSRF攻击的要点就是在服务器发送请求
 
 
 
 
+
+
+
+
+
+#### 课时92【CSRF攻击与防御】CSRF防御原理
+
+1、用户访问工商银行网站进行登录，登录后工商银行相应的cookie信息；										2、用户访问转账页面，工商银行在返回页面之前会做两件事：（1）在cookie中添加成csrf_token（2）在body中（表单页面）中添加一个input标签，input标签中含有相同的csrf_token值，然后返回									3、用户在发送转账的请求，此时带有csrf_token值的input标签也会被一同提交到服务器							4、而js代码无法操作其它域名下的cookie（浏览器做了一层限制）
+
+
+
+#### 课时93【CSRF攻击与防御】Flask中CSRF防御的方法和原理
+
+```python
+
+import config
+from flask_wtf import CSRFProtect
+
+
+app = Flask(__name__)
+app.config.from_object(config)
+db.init_app(app)
+CSRFProtect(app)
+
+
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+```
+
+
+
+#### 课时94【CSRF攻击与防御】AJAX处理CSRF漏洞
+
+在AJAX中使用csrf保护，则必须手动添加X-CSRFToken到Header中。但是CSRF从哪里来，还是需要通过模版来渲染，而Flask比较推荐的方式是在meta标签中渲染CSRF，如下：
+
+```html
+<meta name="csrf-token" content="{{ csrf_token() }}">
+```
+
+
+
+#### 课时103【Flask Restful】Restful API 规范介绍
+
+Restful_api是用在前端于后台进行通信的一套规范。使用这个规范可以让前后端开发更加轻松。
+
+协议：采用http和https协议
+
+数据传输：数据之间传输的格式应该都是用json而不是xml
+
+URL连接：URL链接中，不能有动词，只能有名词。并且对于一些名词，如果出现重复，那么应该在后面s。比如：获取文章列表，应该使用'/articles/',而不是使用'/get_article/'
+
+http请求的方法：																					1、get：从服务器获取资源，而不会对服务器的资源造成影响；												2、post：在服务器上新创建一个资源；																	3、put：在服务器上更新一个资源（客户端提供所有改变后的数据）；											4、patch：在服务器上更新资源（客户端只提供需要改变的属性）；											5、delete：从服务器上删除资源
+
+示例如下：																				GET/user/ 	获取所有用户																			POST/user/ 	新增一个用户																			PUT/user/id/ 	更新一个用户的信息（需要提供用户的所有信息）																		PATCH/user/id/ 	更新一个用户的信息（只需要提供需要更改的信息）																			DELETE/user/id/	删除一个用户
+
+状态码：
+
+#### 课时104【Flask Restful】Flask-Restful插件的基本使用
+
+定义Restful的视图：
+
+如果使用Flask-Restful，那么定义视图函数的时候，就要继承Flask-Restful.Resource类，然后再根据当前请求的method来定义相应的方法。比如期望客户端是使用get()方法发送过来的请求，那么就定义一个get方法。类似于MethodView。其中（1）Api：用来绑定我们的app，并且生成api的对象；（2）Resource：用来创建视图
+
+```python
+from flask import Flask
+from flask_restful import Resource, Api
+
+
+app = Flask(__name__)
+api = Api(app)
+
+
+class LoginView(Resource):
+
+    def post(self):
+        return "username"
+
+
+api.add_resource(LoginView, '/login/', endpoint='Login')
+
+@app.route('/')
+def hello_world():
+    return 'Hello World!'
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
+'''注意事项：
+（1）endpoint 是用来给url_for反转url的时候使用的【url_for（'Login'）】。如果不指定endpoint，那么将会使用视图函数名字的小写字母来作为endpoint【url_for（'loginview'）】
+
+（2）add_resource的第二个参数是访问这个视图函数的URL，这个URL跟以前的route一样，可以传递参数。并且还有一点不同的就是，这个方法可以传递多个url来指定这个视图函数'''
+```
 

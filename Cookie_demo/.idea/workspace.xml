@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="875e76eb-e681-4ec2-8a51-bef362ae2a79" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmsviews.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Restful_API/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Flask_Learning.md" beforeDir="false" afterPath="$PROJECT_DIR$/../Flask_Learning.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../README" beforeDir="false" afterPath="$PROJECT_DIR$/../README" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Icbc/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Icbc/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Session_demo/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Session_demo/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,14 +20,14 @@
     <session id="-1913641213">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="18" />
-          <entry key="project.open.time.0" value="9" />
+          <entry key="project.closed" value="19" />
+          <entry key="project.open.time.0" value="10" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.2" value="1" />
           <entry key="project.open.time.28" value="1" />
           <entry key="project.open.time.3" value="1" />
           <entry key="project.open.time.4" value="5" />
-          <entry key="project.opened" value="18" />
+          <entry key="project.opened" value="19" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -58,7 +58,7 @@
         <entry file="file://$PROJECT_DIR$/app.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="315">
-              <caret line="15" column="15" lean-forward="true" selection-start-line="9" selection-end-line="15" selection-end-column="15" />
+              <caret line="15" column="15" selection-start-line="9" selection-end-line="15" selection-end-column="15" />
               <folding>
                 <element signature="e#0#42#0" expanded="true" />
                 <marker date="1549291083000" expanded="true" signature="510:597" ph="..." />
@@ -71,7 +71,7 @@
         <entry file="file://$PROJECT_DIR$/cmsviews.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="126">
-              <caret line="6" column="14" lean-forward="true" selection-start-line="6" selection-start-column="14" selection-end-line="6" selection-end-column="14" />
+              <caret line="6" column="14" selection-start-line="6" selection-start-column="14" selection-end-line="6" selection-end-column="14" />
               <folding>
                 <marker date="1549290970000" expanded="true" signature="164:169" ph="..." />
               </folding>
@@ -226,9 +226,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="873" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14091559" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1423462" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -279,23 +278,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cmsviews.py">
+    <entry file="file://$PROJECT_DIR$/app.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="6" column="14" lean-forward="true" selection-start-line="6" selection-start-column="14" selection-end-line="6" selection-end-column="14" />
+        <state relative-caret-position="315">
+          <caret line="15" column="15" selection-start-line="9" selection-end-line="15" selection-end-column="15" />
           <folding>
-            <marker date="1549290970000" expanded="true" signature="164:169" ph="..." />
+            <element signature="e#0#42#0" expanded="true" />
+            <marker date="1549291083000" expanded="true" signature="510:597" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app.py">
+    <entry file="file://$PROJECT_DIR$/cmsviews.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="15" column="15" lean-forward="true" selection-start-line="9" selection-end-line="15" selection-end-column="15" />
+        <state relative-caret-position="126">
+          <caret line="6" column="14" selection-start-line="6" selection-start-column="14" selection-end-line="6" selection-end-column="14" />
           <folding>
-            <element signature="e#0#42#0" expanded="true" />
-            <marker date="1549291083000" expanded="true" signature="510:597" ph="..." />
+            <marker date="1549290970000" expanded="true" signature="164:169" ph="..." />
           </folding>
         </state>
       </provider>
