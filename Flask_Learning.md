@@ -2419,13 +2419,7 @@ def hello_world():
 
 #### 课时87【Flask Session】Flask操作session
 
-1、设置session：通过flask.session就可以操作session了，操作session就跟操作字典一样session['username']='zhiliao'
-
-2、获取session：通过session.get(key)来获取
-
-3、删除sesion中的值：可以使用3种方式来删除（1）session.pop(key) (2)sesión.clear()可以删除所有的session (3)del session[key]
-
-4、设置session的有效期：如果没有设置session的有效期，那么默认关闭浏览器后过期；如果设置session.permanent = True，那么就是默认保存31天；如果设置app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)就可以按照设置的时长保存；
+1、设置session：通过flask.session就可以操作session了，操作session就跟操作字典一样session['username']='zhiliao'														2、获取session：通过session.get(key)来获取															3、删除sesion中的值：可以使用3种方式来删除															（1）session.pop(key) (2)sesión.clear()可以删除所有的session (3)del session[key]								4、设置session的有效期：如果没有设置session的有效期，那么默认关闭浏览器后过期；如果设置session.permanent = True，那么就是默认保存31天；如果设置app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)就可以按照设置的时长保存；
 
 ```python
 from flask import Flask, session
@@ -2538,9 +2532,9 @@ Restful_api是用在前端于后台进行通信的一套规范。使用这个规
 
 数据传输：数据之间传输的格式应该都是用json而不是xml
 
-URL连接：URL链接中，不能有动词，只能有名词。并且对于一些名词，如果出现重复，那么应该在后面s。比如：获取文章列表，应该使用'/articles/',而不是使用'/get_article/'
+URL连接：URL链接中，不能有动词，只能有名词。并且对于一些名词，如果出现复数，那么应该在后面加s。比如：获取文章列表，应该使用'/articles/',而不是使用'/get_article/'
 
-http请求的方法：																					1、get：从服务器获取资源，而不会对服务器的资源造成影响；												2、post：在服务器上新创建一个资源；																	3、put：在服务器上更新一个资源（客户端提供所有改变后的数据）；											4、patch：在服务器上更新资源（客户端只提供需要改变的属性）；											5、delete：从服务器上删除资源
+http请求的方法：																					1、get：从服务器获取资源，而不会对服务器的资源造成影响；												2、post：在服务器上新创建一个资源；																	3、put：在服务器上更新资源（客户端提供所有改变后的数据）；											4、patch：在服务器上更新资源（客户端只提供需要改变的属性）；											5、delete：从服务器上删除资源
 
 示例如下：																				GET/user/ 	获取所有用户																			POST/user/ 	新增一个用户																			PUT/user/id/ 	更新一个用户的信息（需要提供用户的所有信息）																		PATCH/user/id/ 	更新一个用户的信息（只需要提供需要更改的信息）																			DELETE/user/id/	删除一个用户
 
@@ -2560,12 +2554,10 @@ from flask_restful import Resource, Api
 app = Flask(__name__)
 api = Api(app)
 
-
 class LoginView(Resource):
 
     def post(self):
         return "username"
-
 
 api.add_resource(LoginView, '/login/', endpoint='Login')
 
@@ -2580,5 +2572,31 @@ if __name__ == '__main__':
 （1）endpoint 是用来给url_for反转url的时候使用的【url_for（'Login'）】。如果不指定endpoint，那么将会使用视图函数名字的小写字母来作为endpoint【url_for（'loginview'）】
 
 （2）add_resource的第二个参数是访问这个视图函数的URL，这个URL跟以前的route一样，可以传递参数。并且还有一点不同的就是，这个方法可以传递多个url来指定这个视图函数'''
+```
+
+#### 课时105【Flask Restful】Flask-Restful参数验证
+
+Flask-Restful 插件提供了类似WTForms来验证提交的数据是否合法的包，叫做reqparse
+
+```python
+from flask import Flask
+from flask_restful import Resource, Api, reqparse
+
+app = Flask(__name__)
+api = Api(app)
+
+
+class LoginView(Resource):
+
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('username', type=str, help="用户名错误", default="aaaa")
+        parser.add_argument('password', type=str, help="密码错误")
+        args = parser.parse_args()
+        print(args)
+        return {"username":"xiamlin"}
+
+    
+    
 ```
 
