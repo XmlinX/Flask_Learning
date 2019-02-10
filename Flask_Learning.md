@@ -2576,7 +2576,7 @@ if __name__ == '__main__':
 
 #### 课时105【Flask Restful】Flask-Restful参数验证
 
-Flask-Restful 插件提供了类似WTForms来验证提交的数据是否合法的包，叫做reqparse
+Flask-Restful 插件提供了类似WTForms来验证提交的数据是否是合法的包，叫做reqparse
 
 ```python
 from flask import Flask
@@ -2600,3 +2600,140 @@ class LoginView(Resource):
     
 ```
 
+parser.add_argument可以指定这个字段的名字，这个名字的数据类型等：										（1）default：默认值，如果这个参数没有值，那么将会使用这个参数指定的值。							（2）required：是否必须。默认为false，如果设置为True，那么这个参数就必须提交上来。					（3）type：这个参数的数据类型，如果指定，那么就会使用指定的数据类型来强制转换提交上来的数据。type可以使用python自带的数据类型，也可以使用flask_restful.inputs下的一些特定的数据类型来强制转换。比如一些常用：1、url：会判断这个参数的值是否是一个url，如果不是，就会抛出异常；2、regex：正则表达式；3、date：将这个字符串转换为datatime.date数据类型。如果转换不成功，就会抛出一个异常。											（4）choices：选项 [ ] 。提交上来的数据只能是这个选项中的值才符合验证通过，否则验证不通过。				（5）help：错误信息。如果验证失败后，就会使用这个参数指定的值作为错误信息。							（6）trim：是否要取出前后空格 。
+
+#### 106【Flask Restful】Flask-Restful靠准化返回参数（1）
+
+输出字段：对于一个视图函数，你可以指定好一些字段用于返回。以后在使用ORM模型或者自定义模型的时候，它会自动的获取模型中的相应字段，生成json数据，然后再返回给客户端。这其中就需要倒入flask_restful.marshal_with装饰器。并且需要写一个字典，来指示需要返回的字段，以及该字段的数据类型，示例代码如下：
+
+```python
+from flask import Flask
+import config
+from flask_restful import Api, Resource, fields, marshal_with
+
+
+app = Flask(__name__)
+app.config.from_object(config)
+api = Api(app)
+
+
+class Article(object):
+
+    def __init__(self, title, content):
+        self.title = title
+        self.content = content
+
+article = Article(title='xia', content='xxxx')
+
+
+class ArticleView(Resource):
+
+    resource_field = {
+        'title':fields.String,
+        'author':fields.String,
+    }
+    @marshal_with(resource_field)
+    def get(self):
+        # restful 规范中，要求定义好了返回参数以后即使这个参数没有返回值，也应该返回，返回一个none
+        return {"title":'xia'}
+
+
+class ArticleView2(Resource):
+
+    resource_field = {
+        'title':fields.String,
+        'content':fields.String,
+    }
+    @marshal_with(resource_field)
+    def get(self):
+        # 可以接受一个模型返回
+        return article
+
+api.add_resource(ArticleView2, '/article2/', endpoint='article2')
+api.add_resource(ArticleView, '/article/', endpoint='article')
+
+@app.route('/')
+def hello_world():
+    return 'Hello World!'
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+```
+
+#### 106【Flask Restful】Flask-Restful靠准化返回参数（2）
+
+重命名属性：很多时候我们面向公众的字段名称是不同于内部的属性名。使用attribute可以配置这种映射。比如现在想要返回user.school中的值，但是在返回给外面的时候，想要以education返回回去，那么可以这样写：
+
+默认值：在返回一些字段的时候，有时候可能没有值，那么这个时候可以在指定fields的时候给定默认值，示例代码如下：
+
+
+
+
+
+
+
+#### 108【Flask Restful】Flask-Restful细节强化
+
+
+
+
+
+
+
+#### 109【memchched】memchched介绍
+
+什么是memchched？																			（1）memchched之前是dabga的一个项目，最早是为LiveJoural服务的，当初设计师为了加速LiveJoural访问速度而开发的，后来被很多大型项目采用。																	（2）Memchched是一个高性能的分布式的内存对象缓存系统，全世界有不少公司采用这个项目来构建大负载的网站，来分担数据库的压力。Memchched是通过在内存中维护一个统一的很大的hash表，memchched能够存储各种各样的数据，包括图像、视频、文件、以及数据库检索的结果等。简单的说就是将数据调用到内存中，然后在内存中读取，从而大大提高了读取速度。																					（3）哪些情况下适合使用Memchched：存储验证码（图形验证码、短信验证码）、登录的session等所有不是至关重要的数据。
+
+#### 110【memchched】memchched的安装和参数详解
+
+1、安装：brew install memchched 检查是否启动：ps aux|grep memchched									2、启动常用的参数：																			（1）-d ：这个参数是让memchched在后台运行														（2）-m：指定占用多少内存。以M为单位，默认为64M													（3）-p：指定占用的端口号。默认端口号为11211													（4）-l：别的及其可以通过哪些ip地址可以连接到这台机器上。如果使用service memchched start 的方式，那么只能通过本级连接，如果想要别的机器连接，则必须设置-l 0.0.0.0																			如果想要使用以上参数指定配置信息，那么不能使用service memchched start 而应该使用/usr/bin/memchched -m 的方式来运行。																						3、连接到 memchched   telnet ip 11211
+
+#### 111【memchched】telnet 操作memchched
+
+1、登录语法：telnet ip 11211（memchched监听的端口号）															2、增加数据 set key flas(是否压缩) timeout value_length     value【如果这个key之前已经存在，那么就会覆盖掉原来的值，如果没有则会新添加一个key】	示例代码如下：set username 0 60 7  zhiliao 									3、add：给memchched添加键值对。如果memchched中之前已经存在这个key，那么就添加失败，否则就添加成功。add  key flas(是否压缩) timeout value_length   value 														4、delete：删除一个值。delete key  【另外：flush_all 立即删除所有的数据】													5、incr :给一个数字的数据类型进行一个相加（必须都是数字类型的数据）											6、decr :给一个数字的数据类型进行一个相减															7、stats：查看memchched 的状态
+
+#### 112【memchched】Python操作memchched
+
+```python
+import memcache
+
+
+mc = memcache.Client(["192.168.0.27:11211"],debug=True)
+
+#通过代码的形式设置一个值
+mc.set('name','xmlin',time=120)
+
+#一次性设置多个值
+mc.set_multi({"title":"xia", "author":"yeyanmei","tags":"励志"}, time=120)
+
+#获取一个值
+username = mc.get('name')
+print(username)
+
+#删除数据
+username = mc.get('name')
+print(username)
+mc.delete('name')
+username = mc.get('name')
+print(username)
+
+#自增长
+mc.incr('age',delta=10)
+age = mc.get('age')
+print(age)
+
+#自减少
+mc.decr('age', delta=100)
+age = mc.get('age')
+print(age)
+
+
+'''如果想要连接多台服务器'''
+mc = memcache.Client(["ip1:11211","ip2:11211"],debug=True)
+```
+
+#### 113【memchched】memchched的安全机制
+
+ufw设置防火墙：ufw deny 11211 关闭某个端口 ufw alllow 端口号：开启某个端口
