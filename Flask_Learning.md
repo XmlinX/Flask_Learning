@@ -2602,7 +2602,7 @@ class LoginView(Resource):
 
 parser.add_argument可以指定这个字段的名字，这个名字的数据类型等：										（1）default：默认值，如果这个参数没有值，那么将会使用这个参数指定的值。							（2）required：是否必须。默认为false，如果设置为True，那么这个参数就必须提交上来。					（3）type：这个参数的数据类型，如果指定，那么就会使用指定的数据类型来强制转换提交上来的数据。type可以使用python自带的数据类型，也可以使用flask_restful.inputs下的一些特定的数据类型来强制转换。比如一些常用：1、url：会判断这个参数的值是否是一个url，如果不是，就会抛出异常；2、regex：正则表达式；3、date：将这个字符串转换为datatime.date数据类型。如果转换不成功，就会抛出一个异常。											（4）choices：选项 [ ] 。提交上来的数据只能是这个选项中的值才符合验证通过，否则验证不通过。				（5）help：错误信息。如果验证失败后，就会使用这个参数指定的值作为错误信息。							（6）trim：是否要取出前后空格 。
 
-#### 106【Flask Restful】Flask-Restful靠准化返回参数（1）
+#### 课时106【Flask Restful】Flask-Restful靠准化返回参数（1）
 
 输出字段：对于一个视图函数，你可以指定好一些字段用于返回。以后在使用ORM模型或者自定义模型的时候，它会自动的获取模型中的相应字段，生成json数据，然后再返回给客户端。这其中就需要倒入flask_restful.marshal_with装饰器。并且需要写一个字典，来指示需要返回的字段，以及该字段的数据类型，示例代码如下：
 
@@ -2662,7 +2662,7 @@ if __name__ == '__main__':
 
 ```
 
-#### 106【Flask Restful】Flask-Restful靠准化返回参数（2）
+#### 课时106【Flask Restful】Flask-Restful靠准化返回参数（2）
 
 重命名属性：很多时候我们面向公众的字段名称是不同于内部的属性名。使用attribute可以配置这种映射。比如现在想要返回user.school中的值，但是在返回给外面的时候，想要以education返回回去，那么可以这样写：
 
@@ -2674,7 +2674,7 @@ if __name__ == '__main__':
 
 
 
-#### 108【Flask Restful】Flask-Restful细节强化
+#### 课时108【Flask Restful】Flask-Restful细节强化
 
 
 
@@ -2682,19 +2682,19 @@ if __name__ == '__main__':
 
 
 
-#### 109【memchched】memchched介绍
+#### 课时109【memchched】memchched介绍
 
 什么是memchched？																			（1）memchched之前是dabga的一个项目，最早是为LiveJoural服务的，当初设计师为了加速LiveJoural访问速度而开发的，后来被很多大型项目采用。																	（2）Memchched是一个高性能的分布式的内存对象缓存系统，全世界有不少公司采用这个项目来构建大负载的网站，来分担数据库的压力。Memchched是通过在内存中维护一个统一的很大的hash表，memchched能够存储各种各样的数据，包括图像、视频、文件、以及数据库检索的结果等。简单的说就是将数据调用到内存中，然后在内存中读取，从而大大提高了读取速度。																					（3）哪些情况下适合使用Memchched：存储验证码（图形验证码、短信验证码）、登录的session等所有不是至关重要的数据。
 
-#### 110【memchched】memchched的安装和参数详解
+#### 课时110【memchched】memchched的安装和参数详解
 
 1、安装：brew install memchched 检查是否启动：ps aux|grep memchched									2、启动常用的参数：																			（1）-d ：这个参数是让memchched在后台运行														（2）-m：指定占用多少内存。以M为单位，默认为64M													（3）-p：指定占用的端口号。默认端口号为11211													（4）-l：别的及其可以通过哪些ip地址可以连接到这台机器上。如果使用service memchched start 的方式，那么只能通过本级连接，如果想要别的机器连接，则必须设置-l 0.0.0.0																			如果想要使用以上参数指定配置信息，那么不能使用service memchched start 而应该使用/usr/bin/memchched -m 的方式来运行。																						3、连接到 memchched   telnet ip 11211
 
-#### 111【memchched】telnet 操作memchched
+#### 课时111【memchched】telnet 操作memchched
 
 1、登录语法：telnet ip 11211（memchched监听的端口号）															2、增加数据 set key flas(是否压缩) timeout value_length     value【如果这个key之前已经存在，那么就会覆盖掉原来的值，如果没有则会新添加一个key】	示例代码如下：set username 0 60 7  zhiliao 									3、add：给memchched添加键值对。如果memchched中之前已经存在这个key，那么就添加失败，否则就添加成功。add  key flas(是否压缩) timeout value_length   value 														4、delete：删除一个值。delete key  【另外：flush_all 立即删除所有的数据】													5、incr :给一个数字的数据类型进行一个相加（必须都是数字类型的数据）											6、decr :给一个数字的数据类型进行一个相减															7、stats：查看memchched 的状态
 
-#### 112【memchched】Python操作memchched
+#### 课时112【memchched】Python操作memchched
 
 ```python
 import memcache
@@ -2734,6 +2734,96 @@ print(age)
 mc = memcache.Client(["ip1:11211","ip2:11211"],debug=True)
 ```
 
-#### 113【memchched】memchched的安全机制
+#### 课时113【memchched】memchched的安全机制
 
 ufw设置防火墙：ufw deny 11211 关闭某个端口 ufw alllow 端口号：开启某个端口
+
+
+
+
+
+课时114【Redis】
+
+Redis教程：
+
+概述：Redis是一种nosql数据库。它的数据保存在内存中，同时Redis可以定时把内存中的数据同步到磁盘中，即可以实现数据的持久化，并且比memcached支持更多的数据结构（string，list列表【栈和队列】,set【集合】，sorted set【有序集合】，set【集合】，hash【hash表】）
+
+
+
+Redis使用场景：
+
+1、登录会话存储（session信息）存储在redis中，与memcached相比，不会丢失；								2、排行榜/计数器：比如一些选秀项目，经常会有一些前多少名主播排名。还有一些文章的阅读量技术，或者新浪微博的点赞数等。																							3、作为消息队列：比如celery就是使用redis作为中间人；														4、当前在线人数：还是之前的选秀节目，会显示当前系统有在线人数；										5、一些常用数据缓存：比如我们的bbs论坛，板块不会经常变化，但是每次访问首页都要从mysql中获取，可以在redis中缓存起来，不用每次都请求数据库；																			6、把前200篇文章缓存或评论缓存：一般用户浏览网站，只会看前面一部分文章或者评论，那么可以把前面200篇文章和对应的评论缓存起来。用户访问超过的，就去数据库访问，并且以后文章超过200篇，就删除之前的文章；				7、好友关系：微博的还有关系使用redis实现；															8、发布和订阅功能：可是用来做聊天软件；
+
+#### 课时115【Redis】Redis的安装以及客户端连接
+
+#### 课时116【Redis】Redis操作字符串以及设置过期时间操作	
+
+1、安装之后要启动redis：redis-server 																	2、使用redis-cli -p 端口号 -h ip地址	实现与服务器连接；												3、添加一个值：set key  value 																		4、获取一个值：get username																			5、如果设置的字符串字段值中间有空格，则需要使用引号将值扩起来，否则会报错：set name "xia mei lin"					6、删除：del key																							7、过期时间：如果在添加值的时候没有设置过期时间，则是永久的，否则有两种方法可以设置过期时间：								（1）set key value EX timeout ，然后可以使用 ttl key 查看该key 的过期时间（2）set key value  然后在使用expire key timeout 可以设置过期时间																				8、查看所有的key：key * 
+
+
+
+#### 课时117【Redis】Redis的列表操作
+
+1、在列表左边添加一个元素：lpush key value 如果列表不存在就会帮我创建一个列表，如果存在就把值添加进去；		2、查看列表中的元素 lrange key start stop 返回列表中指定区间的元素，区间以偏移量start 和stop 指定。如果要左边的第一个到最后一个元素 lange key 0 -1；																	3、从右边插入数据：rpush key value；																		 4、从列表中移除元素：（1）移除并返回列表key的头元素：lpop key （2）移除并返回列表的尾元素：rpop key （3）移除列表中的指定元素：lrem key count value 当count 值为0的时删除所有的值，另外也可以使用负值进行删除；		5、指定返回第几个元素：lindex key index；																		 6、查看列表中有几个元素：llen key 
+
+#### 课时118【Redis】Redis的集合操作（集合中的元素不能重复，必须是唯一的，无序的）
+
+set集合操作：																														1、sadd set value1 value2 value3 																		2、查看集合元素：smembers key 																		3、移除集合中的元素：srem key value 																	4、查看集合中有多少个元素：scard key 																		5、交集：sinter key1  key2 																				6、并集：sunion key1 key2 																										7、差集：只会删除相同的元素 ，留下不相同的元素 sdiff key1 key2 
+
+#### 课时119【Redis】Redis的hash操作
+
+{
+
+​	"username":"zhiliao",
+
+​	"websites":['Baidu','google','qq', ''360]
+
+​	"school":set('qinghua','zhiliao')
+
+​	person:{
+
+​			"name":"xia"，
+
+​			"age":18,
+
+​			"height":180
+
+​		}
+
+}
+
+1、添加一个新值 hset key field1(子健) value 将哈希表中key中的域field 的值设置为value，如果key不存在就会创建一个新的哈希表，如果域field已经存在于哈希表中，旧值就会变覆盖；												2、获取哈希中field对应的值：hget key field 																3、删除哈希中的field对应的值：hdel key field 																4、获取某个哈希下面的所有的field 和value																	5、一次性设置多个键值对：hmset key field1 value1 field2 value2												6、获取哈希中所有的field：hkeys key 																		7、获取哈希中所有的value：hvals key																		8、获取哈希中所有的键值对：hgetall key																					9、判断哈希中是否存在某个field：hexists key field 																	10、获取哈希中所有的键值对的个数：hlen key
+
+#### 课时120【Redis】Redis中的事务操作
+
+事务操作：																												Redis事务操作可以一次执行多个命令，事物具有以下特征：																	1、隔离操作：事务中的所有命令都会序列化、按顺序的执行，不会被其他命令打扰；																2、原子操作：事务中的命令要么全部执行，要么全部都不执行；
+
+开启一个事物：multi，以后执行的命令都在这个事务中；discard ：退出事务不会执行；exec：一次性执行事务中所有的命令；监视一个或多个key：watch key 可以监听某个值，如果某个值改变了，就不会执行；取消监视：unwatch
+
+
+
+#### 课时121【Redis】Redis中的发布与订阅功能
+
+发布：打电话，发消息
+
+订阅：接电话。看门狗，一直死循环的在监听
+
+发布／订阅操作：给某个频道发布消息：publish channel message  订阅某个频道发布的消息：subscribe channel1，订阅多个频道：subscribe channel1 channel2 channel3
+
+#### 课时122【Redis】Redis中RDB和AOF的两种数据持久化机制
+
+持久化：Redis提供了两种数据备份方式，同步到文件当中。Redis提供了RDB和AOF的两种数据持久化机制：
+
+|              | RDB                                                          | AOF                                                          |
+| ------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 开启关闭     | 开启：默认开启。关闭：把配置文件redis.conf中所有的save都注释掉，就是关闭。修改了配置后需要重启redis | 开启：默认是关闭的。在配置文件redis.conf中，将appendonly改为yes可以开启。 |
+| 同步机制     | 可以指定某个时间内发生多少个命令进行同步。比如1分钟内发生2次命令，就做一次同步 | 每秒同步或者每次发生命令同步。       appendfsync always每次有数据更新操作都会同步到文件中。                                               appendfsync  everysec 每秒有数据更新都进行一次更新 |
+| 存储内容     | 存储的是redis中具体的值，会进行压缩                          | 存储的执行更新数据的具体的命令，不会进行压缩                 |
+| 存储文件路径 | 根据dir以及dbfilename来指定路径和具体的文件名。默认是在／var／lib／redis／dump.rdb下 | 根据dir以及appendfilename 来指定具体的路径和文件名。／var／lib／redis／append only,aof |
+| 优点         | （1）存储数据到文件中会压缩，所以体积比AOF小；                                                        （2）因为存储的是redis具体的值，并且会经过压缩，因此在恢复的时候速度比AOF快；（3）非常适用于备份 | （1）AOF的策略是每秒钟或者每次发生写操作的时候同步，因此服务器故障只会丢失1秒的数据。（2）AOF存储的是redis命令，并且是直接追加到aof文件后面，因此每次备份都只需要添加新数据进去就可以了，效率比RDB快。（3）如果aof文件较大了，那么redis会进行重写（保留最后一个），只保留最小的命令集合 |
+| 缺点         | （1）RDB指定多少时间内发生了多少写操作的时候就会出现同步机制，因为采用压缩机制，RDB在同步的时候都重新保存了整个Redis中的数据，因此你一般会设置在最少5分钟才能保存一次数据。在这种情况下，一旦服务器故障，就会丢失5分钟的数据；（2）在数据保存进RDB的时候，Redis会fork一个子进程来同步，在数据量比较大的时候，可能会非常耗时。 | （1）aof文件没有压缩，因此体积比较大；（2）aof是每秒或者每次操作后都进行备份，因此并发量大了效率就有可能有点慢；（3）aof文件存储的是命令，因此在灾难恢复的时候Redis会重新进行aof中的命令，有点慢 |
+
+
+
+
+
